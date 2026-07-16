@@ -64,13 +64,27 @@ async function fetchDatabaseFromGitHub(config) {
     let steps = [];
     let logs = [];
 
+    // Helper to fetch file content via the API (avoiding CORS issues on raw.githubusercontent.com)
+    async function fetchFileContent(filePath) {
+        const url = `https://api.github.com/repos/${repo}/contents/${filePath}?ref=${branch}`;
+        const res = await fetch(url, { headers });
+        if (res.ok) {
+            const fileData = await res.json();
+            // Decode base64 (safely preserving UTF-8 Unicode characters)
+            const decoded = decodeURIComponent(escape(atob(fileData.content.replace(/\s/g, ''))));
+            return JSON.parse(decoded);
+        }
+        throw new Error(`Failed to load file: ${filePath}`);
+    }
+
     // 2. Fetch projects.json (projects + steps)
     if (projectsFile) {
-        const projRes = await fetch(projectsFile.download_url, { headers });
-        if (projRes.ok) {
-            const projData = await projRes.json();
+        try {
+            const projData = await fetchFileContent(projectsFile.path);
             projects = projData.projects || [];
             steps = projData.steps || [];
+        } catch (e) {
+            console.error("Failed to read projects.json:", e);
         }
     }
 
@@ -78,10 +92,7 @@ async function fetchDatabaseFromGitHub(config) {
     if (logFiles.length > 0) {
         const logPromises = logFiles.map(async (file) => {
             try {
-                const logRes = await fetch(file.download_url, { headers });
-                if (logRes.ok) {
-                    return await logRes.json();
-                }
+                return await fetchFileContent(file.path);
             } catch (err) {
                 console.warn(`Failed to fetch log file ${file.name}:`, err);
             }
