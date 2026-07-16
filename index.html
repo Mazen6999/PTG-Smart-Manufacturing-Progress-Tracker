@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prometeon Progress Tracker | Client-Side SPA</title>
+    <!-- Stylesheet -->
+    <link rel="stylesheet" href="css/styles.css">
+    <!-- SQLite WebAssembly Parser CDN -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.8.0/sql-wasm.js"></script>
+</head>
+<body>
+
+    <div class="app-container">
+        <!-- Main Content Section (Full width layout) -->
+        <div class="main-content">
+            <header class="navbar glass">
+                <div class="nav-brand">
+                    <span class="brand-logo">📊</span>
+                    <div class="brand-name">
+                        <h1>SM Tracker</h1>
+                        <span>Excel & Web SPA</span>
+                    </div>
+                </div>
+
+                <ul class="nav-links">
+                    <li>
+                        <a href="#/dashboard" class="active">
+                            <span class="menu-icon">📁</span>
+                            <span>Roadmap Dashboard</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#/logs">
+                            <span class="menu-icon">📝</span>
+                            <span>Daily Logs Console</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#/database">
+                            <span class="menu-icon">⚙️</span>
+                            <span>Settings & SQLite</span>
+                        </a>
+                    </li>
+                </ul>
+
+                <div class="nav-actions">
+                    <div class="user-profile">
+                        <span>🧑‍💻 Prometeon Team</span>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Workspace dynamic content container viewport -->
+            <main id="main-viewport" class="content-viewport">
+                <!-- Javascript renders routes templates dynamically here -->
+            </main>
+        </div>
+    </div>
+
+    <!-- ==========================================
+         GLOBAL VIEW MODAL DIALOGS
+         ========================================== -->
+
+    <!-- 1. New Project Modal -->
+    <div id="new-project-modal" class="modal-overlay">
+        <div class="modal-card glass">
+            <div class="modal-header">
+                <h3>Create New Work Item Project</h3>
+                <button class="modal-close" onclick="this.closest('.modal-overlay').classList.remove('active')">✖</button>
+            </div>
+            <form id="new-project-form" class="standard-form">
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="new_proj_name">Work Item Name *</label>
+                        <input type="text" id="new_proj_name" name="name" required placeholder="e.g. conveyors crack AI sensor integration">
+                    </div>
+                    
+                    <div class="form-group" style="margin-top: 14px;">
+                        <label for="new_proj_desc">Description</label>
+                        <textarea id="new_proj_desc" name="description" rows="3" placeholder="Brief outline of the project scope and metrics..."></textarea>
+                    </div>
+
+                    <div class="form-row" style="margin-top: 14px;">
+                        <div class="form-group">
+                            <label for="new_proj_priority">Priority Code</label>
+                            <input type="number" id="new_proj_priority" name="priority" value="9999.0" step="0.5" placeholder="e.g. 1.0, 2.5">
+                        </div>
+                        <div class="form-group">
+                            <label for="new_proj_assign">Assigned To</label>
+                            <input type="text" id="new_proj_assign" name="assigned_to" placeholder="e.g. Eng. Mazen, Eng. Taric">
+                        </div>
+                    </div>
+
+                    <div class="form-row" style="margin-top: 14px;">
+                        <div class="form-group">
+                            <label for="new_proj_start">Start Date</label>
+                            <input type="date" id="new_proj_start" name="start_date">
+                        </div>
+                        <div class="form-group">
+                            <label for="new_proj_due">Due Date</label>
+                            <input type="date" id="new_proj_due" name="due_date">
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" onclick="this.closest('.modal-overlay').classList.remove('active')">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Create Project</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- 2. Add Project Schedule Step Modal -->
+    <div id="new-step-modal" class="modal-overlay">
+        <div class="modal-card glass">
+            <div class="modal-header">
+                <h3 id="step-modal-title">Add New Schedule Timeline Step</h3>
+                <button class="modal-close" onclick="this.closest('.modal-overlay').classList.remove('active')">✖</button>
+            </div>
+            <form id="new-step-form" class="standard-form">
+                <div class="modal-body">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="step_code">Step Code ID *</label>
+                            <input type="text" id="step_code" name="step_code" required placeholder="e.g. s3">
+                        </div>
+                        <div class="form-group">
+                            <label for="step_name">Step Title / Description *</label>
+                            <input type="text" id="step_name" name="name" required placeholder="e.g. Commissioning & trials">
+                        </div>
+                    </div>
+
+                    <div class="form-row" style="margin-top: 14px;">
+                        <div class="form-group">
+                            <label for="step_assigned_to">Assigned Engineer</label>
+                            <input type="text" id="step_assigned_to" name="assigned_to" placeholder="e.g. Eng. Nada">
+                        </div>
+                        <div class="form-group">
+                            <label for="step_progress">Initial Progress %</label>
+                            <input type="number" id="step_progress" name="progress" min="0" max="100" value="0">
+                        </div>
+                    </div>
+
+                    <div class="form-row" style="margin-top: 14px;">
+                        <div class="form-group">
+                            <label for="step_start_date">Start Date</label>
+                            <input type="date" id="step_start_date" name="start_date">
+                        </div>
+                        <div class="form-group">
+                            <label for="step_end_date">End Date</label>
+                            <input type="date" id="step_end_date" name="end_date">
+                        </div>
+                    </div>
+
+                    <div class="form-row" style="margin-top: 14px;">
+                        <div class="form-group">
+                            <label for="step_dependencies">Dependencies (Preceding ID)</label>
+                            <input type="text" id="step_dependencies" name="dependencies" placeholder="e.g. s2">
+                        </div>
+                        <div class="form-group">
+                            <label for="step_status">Status</label>
+                            <select id="step_status" name="status">
+                                <option value="Not started" selected>Not started</option>
+                                <option value="In progress">In progress</option>
+                                <option value="Completed">Completed</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-row" style="margin-top: 14px;">
+                        <div class="form-group">
+                            <label for="step_section">Schedule Section</label>
+                            <input type="text" id="step_section" name="section" placeholder="e.g. SETUP, TRIAL, ROLLOUT">
+                        </div>
+                        <div class="form-group">
+                            <label for="step_external_dep">External Dependency (Blocker)</label>
+                            <input type="text" id="step_external_dep" name="external_dep" placeholder="e.g. Contractor delays, Spare parts">
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" onclick="this.closest('.modal-overlay').classList.remove('active')">Cancel</button>
+                    <button type="submit" class="btn btn-primary" id="step-modal-submit-btn">Save Step</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- 3. Add Project Log Modal -->
+    <div id="new-log-modal" class="modal-overlay">
+        <div class="modal-card glass">
+            <div class="modal-header">
+                <h3>Submit Project Daily Log Update</h3>
+                <button class="modal-close" onclick="this.closest('.modal-overlay').classList.remove('active')">✖</button>
+            </div>
+            <form id="new-log-form" class="standard-form">
+                <div class="modal-body">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="log_entry_date">Date *</label>
+                            <input type="date" id="log_entry_date" name="date" required value="">
+                            <script>
+                                // Auto set date fields to today's local date
+                                document.getElementById('log_entry_date').value = new Date().toISOString().split('T')[0];
+                            </script>
+                        </div>
+                        <div class="form-group">
+                            <label for="log_entry_engineer">Engineer *</label>
+                            <input type="text" id="log_entry_engineer" name="engineer" required placeholder="e.g. Eng. Taric">
+                        </div>
+                    </div>
+                    
+                    <div class="form-group" style="margin-top: 14px;">
+                        <label for="log_entry_planned">Planned Today</label>
+                        <textarea id="log_entry_planned" name="planned_today" rows="2" placeholder="Tasks scheduled or targeted for today..."></textarea>
+                    </div>
+
+                    <div class="form-group" style="margin-top: 14px;">
+                        <label for="log_entry_done">Actually Done *</label>
+                        <textarea id="log_entry_done" name="actually_done" rows="2" required placeholder="Detail today's achievements and metrics updates..."></textarea>
+                    </div>
+
+                    <div class="form-group" style="margin-top: 14px;">
+                        <label for="log_entry_comments">Comments / Blocker Notes</label>
+                        <textarea id="log_entry_comments" name="comments" rows="2" placeholder="Any issues, roadblocks, supplier delays..."></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" onclick="this.closest('.modal-overlay').classList.remove('active')">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Archive Log Entry</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- 3. Mobile Bottom Navigation Bar -->
+    <nav class="mobile-bottom-nav glass">
+        <a href="#/dashboard" class="mobile-nav-item active">
+            <span class="mobile-nav-icon">📁</span>
+            <span class="mobile-nav-label">Roadmap</span>
+        </a>
+        <a href="#/logs" class="mobile-nav-item">
+            <span class="mobile-nav-icon">📝</span>
+            <span class="mobile-nav-label">Daily Logs</span>
+        </a>
+        <a href="#/database" class="mobile-nav-item">
+            <span class="mobile-nav-icon">⚙️</span>
+            <span class="mobile-nav-label">Settings</span>
+        </a>
+    </nav>
+
+    <!-- Sequentially loaded global scripts (supports running directly from file://) -->
+    <script src="js/store.js"></script>
+    <script src="js/gantt.js"></script>
+    <script src="js/components.js"></script>
+    <script src="js/app.js"></script>
+
+</body>
+</html>
