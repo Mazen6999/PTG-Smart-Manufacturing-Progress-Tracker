@@ -1,0 +1,8 @@
+# Local server logs and process tracking
+server.pid
+server_error.log
+
+# System files
+.DS_Store
+Thumbs.db
+Desktop.ini
