@@ -1503,6 +1503,21 @@
       "dependencies": "s1",
       "section": "FUTURE",
       "external_dep": null
+    },
+    {
+      "id": 82,
+      "project_id": 1,
+      "step_code": "s23",
+      "name": "Dummy Verification Step",
+      "assigned_to": "Mazen",
+      "duration": 1,
+      "start_date": null,
+      "end_date": null,
+      "progress": 0,
+      "status": "Not started",
+      "dependencies": null,
+      "section": null,
+      "external_dep": null
     }
   ]
 }
