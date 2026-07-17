@@ -746,11 +746,14 @@ function renderLogs() {
 
             <!-- Historical logs table container -->
             <div class="log-archive-container glass">
-                <div class="archive-header">
+                <div class="archive-header" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
                     <h3>📁 Historical Log Archive</h3>
-                    <div class="search-box">
-                        <span class="search-icon">🔍</span>
-                        <input type="text" id="log-search-input" placeholder="Search archive logs...">
+                    <div style="display: flex; gap: 10px; align-items: center;">
+                        <button class="btn btn-secondary btn-sm" id="load-archived-logs-btn" style="padding: 6px 12px; font-size: 13px; line-height: 1;">📂 Load Full History</button>
+                        <div class="search-box">
+                            <span class="search-icon">🔍</span>
+                            <input type="text" id="log-search-input" placeholder="Search archive logs...">
+                        </div>
                     </div>
                 </div>
 
@@ -1000,6 +1003,65 @@ function renderLogs() {
             });
         });
     }
+
+    // Load archived logs trigger
+    const loadArchiveBtn = document.getElementById('load-archived-logs-btn');
+    if (loadArchiveBtn) {
+        loadArchiveBtn.addEventListener('click', async () => {
+            loadArchiveBtn.disabled = true;
+            loadArchiveBtn.textContent = "⏱️ Loading...";
+            try {
+                window.UI.showToast("Fetching database_archive.json...", "info");
+                const mergedLogs = await window.Store.loadArchivedLogs();
+                window.UI.showToast(`Merged ${mergedLogs.length} total logs!`, "success");
+                
+                // Re-render the table body dynamically
+                const tbody = document.getElementById('logs-archive-tbody');
+                if (tbody) {
+                    tbody.innerHTML = mergedLogs.map(log => {
+                        const projLink = log.project_id 
+                            ? `<a href="#/project/${log.project_id}" class="project-link font-semibold">${log.project_name}</a>` 
+                            : `<span class="font-semibold">${log.project_name}</span>`;
+                        return `
+                        <tr class="log-row" data-search="${log.project_name.toLowerCase()} ${log.engineer.toLowerCase()} ${(log.actually_done || '').toLowerCase()} ${(log.comments || '').toLowerCase()}">
+                            <td class="text-center text-muted text-small">${log.date}</td>
+                            <td>${projLink}</td>
+                            <td>🧑‍💻 ${log.engineer}</td>
+                            <td class="text-small text-muted">${log.planned_today || '-'}</td>
+                            <td class="text-small font-semibold">${log.actually_done}</td>
+                            <td class="text-small"><em>${log.comments || '-'}</em></td>
+                            <td class="text-center">
+                                <span class="badge badge-sm badge-${log.type.toLowerCase()}">
+                                    ${log.type}
+                                </span>
+                            </td>
+                            <td class="text-center">
+                                <button class="btn-icon text-danger delete-archive-log-btn" data-id="${log.id}">🗑️</button>
+                            </td>
+                        </tr>
+                        `;
+                    }).join('');
+
+                    // Re-bind delete buttons for the new items
+                    document.querySelectorAll('.delete-archive-log-btn').forEach(btn => {
+                        btn.addEventListener('click', (e) => {
+                            const id = e.target.getAttribute('data-id');
+                            if (confirm('Delete this historical log update entry?')) {
+                                window.Store.deleteLog(id);
+                                window.UI.showToast('Log entry removed', 'info');
+                                renderLogs();
+                            }
+                        });
+                    });
+                }
+                loadArchiveBtn.textContent = "✅ Loaded";
+            } catch (err) {
+                loadArchiveBtn.disabled = false;
+                loadArchiveBtn.textContent = "📂 Load Full History";
+                window.UI.showToast(`Failed to load archive: ${err.message}`, 'danger');
+            }
+        });
+    }
 }
 
 // 4. DATABASE & MIGRATION CONSOLE VIEW
@@ -1045,30 +1107,7 @@ function renderDatabaseView() {
                 </div>
             </div>
 
-            <!-- SQLite DB file importer -->
-            <div class="settings-card glass">
-                <div class="settings-card-header">
-                    <h3>📁 OneDrive SQLite Database Importer</h3>
-                    <p class="text-muted text-small">Select or drag your local <code>progress_tracker.db</code> file from OneDrive here to parse and import all data instantly using client WebAssembly.</p>
-                </div>
-                
-                <div class="db-import-dropzone" id="db-dropzone">
-                    <div class="dropzone-content">
-                        <span class="dropzone-icon">📥</span>
-                        <p class="font-bold">Drag & Drop sqlite <code>progress_tracker.db</code> here</p>
-                        <p class="text-muted text-small">or click to browse local files</p>
-                        <input type="file" id="sqlite-file-input" accept=".db,.sqlite,.sqlite3" style="display: none;">
-                    </div>
-                </div>
 
-                <div id="import-stats-block" style="display: none;" class="status-summary-alert glass">
-                    <span class="status-icon">🚀</span>
-                    <div class="status-details">
-                        <h4 class="font-bold">SQLite database imported successfully!</h4>
-                        <p class="text-small text-muted" id="sqlite-import-counts"></p>
-                    </div>
-                </div>
-            </div>
 
             <!-- JSON Backup Export & Restorer -->
             <div class="settings-card glass">
@@ -1087,6 +1126,18 @@ function renderDatabaseView() {
                         <input type="file" id="json-restore-file" accept=".json" class="file-input-field">
                     </div>
                     <button class="btn btn-secondary btn-full" id="import-json-btn">📤 Upload & Restore Backup</button>
+                </div>
+            </div>
+
+            <!-- Logs Archive Console -->
+            <div class="settings-card glass">
+                <div class="settings-card-header">
+                    <h3>📦 Archive Historical Daily Logs</h3>
+                    <p class="text-muted text-small">Keep the main database lightweight. Move daily logs older than the 30 most recent entries to a separate <code>database_archive.json</code> file in your repository.</p>
+                </div>
+                <div class="settings-actions">
+                    <button class="btn btn-secondary btn-full" id="archive-older-logs-btn">📦 Move Older Logs to Archive</button>
+                    <p class="text-muted text-small" id="archive-status-msg" style="margin-top: 10px; display: none;"></p>
                 </div>
             </div>
 
@@ -1153,30 +1204,7 @@ function renderDatabaseView() {
         });
     }
 
-    // Dropzone setup
-    const dropzone = document.getElementById('db-dropzone');
-    const fileInput = document.getElementById('sqlite-file-input');
 
-    if (dropzone && fileInput) {
-        dropzone.addEventListener('click', () => fileInput.click());
-        dropzone.addEventListener('dragover', (e) => {
-            e.preventDefault();
-            dropzone.classList.add('dragover');
-        });
-        dropzone.addEventListener('dragleave', () => dropzone.classList.remove('dragover'));
-        dropzone.addEventListener('drop', (e) => {
-            e.preventDefault();
-            dropzone.classList.remove('dragover');
-            if (e.dataTransfer.files.length > 0) {
-                handleSQLiteFile(e.dataTransfer.files[0]);
-            }
-        });
-        fileInput.addEventListener('change', (e) => {
-            if (e.target.files.length > 0) {
-                handleSQLiteFile(e.target.files[0]);
-            }
-        });
-    }
 
     // Export JSON Backup
     document.getElementById('export-json-btn').addEventListener('click', () => {
@@ -1230,47 +1258,56 @@ function renderDatabaseView() {
             renderDatabaseView();
         }
     });
-}
 
-// Client-Side parsing of SQLite using WebAssembly sql.js
-function handleSQLiteFile(file) {
-    window.UI.showToast("Loading and parsing SQLite file. Please wait...", "info");
-
-    const reader = new FileReader();
-    reader.onload = async function(e) {
-        const arrayBuffer = e.target.result;
-        
-        try {
-            // Dynamically load sql.js dependencies from cdn
-            if (typeof initSqlJs === 'undefined') {
-                throw new Error("Wasm SQLite libraries are still loading. Please try again in a few seconds.");
+    // Archive older logs to GitHub
+    const archiveBtn = document.getElementById('archive-older-logs-btn');
+    if (archiveBtn) {
+        archiveBtn.addEventListener('click', async () => {
+            const config = window.Store.getGitHubConfig();
+            if (!config.enabled || !config.repo || !config.token) {
+                window.UI.showToast('Please enable and configure GitHub Sync settings first to archive logs.', 'danger');
+                return;
             }
 
-            const SQL = await initSqlJs({
-                locateFile: file => `https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.8.0/${file}`
-            });
-
-            const result = await window.Store.importSQLite(arrayBuffer, SQL);
-            if (result.success) {
-                window.UI.showToast(`SQLite database loaded. Projects: ${result.projects}, Logs: ${result.logs}!`, "success");
-                
-                // Show statistics panel
-                const statsBlock = document.getElementById('import-stats-block');
-                const countsText = document.getElementById('sqlite-import-counts');
-                if (statsBlock && countsText) {
-                    countsText.textContent = `Extracted items: ${result.projects} Projects, ${result.steps} Schedule Steps, ${result.logs} Archive Daily Logs. Check the Roadmap Dashboard now.`;
-                    statsBlock.style.display = 'flex';
+            if (confirm("Are you sure you want to move daily logs older than the latest 30 entries to the repository archive file?")) {
+                archiveBtn.disabled = true;
+                const statusMsg = document.getElementById('archive-status-msg');
+                if (statusMsg) {
+                    statusMsg.style.display = 'block';
+                    statusMsg.style.color = '#38bdf8';
+                    statusMsg.textContent = '⏱️ Running log archiving pipeline. Writing to GitHub contents API...';
                 }
-            } else {
-                window.UI.showToast(`Failed loading file: ${result.error}`, "danger");
+                
+                try {
+                    window.UI.showToast("Archiving daily logs...", "info");
+                    const res = await window.Store.archiveOlderLogs(30);
+                    archiveBtn.disabled = false;
+                    
+                    if (statusMsg) {
+                        if (res.archivedCount > 0) {
+                            statusMsg.style.color = '#4ade80';
+                            statusMsg.textContent = `✅ Successfully archived ${res.archivedCount} older daily logs (Total in archive: ${res.totalArchived} logs). Main database.json is now optimized!`;
+                            window.UI.showToast(`Archived ${res.archivedCount} older logs successfully!`, 'success');
+                        } else {
+                            statusMsg.style.color = '#fbbf24';
+                            statusMsg.textContent = `ℹ️ ${res.message || "No logs needed archiving."}`;
+                            window.UI.showToast("No logs needed archiving.", "info");
+                        }
+                    }
+                } catch (err) {
+                    archiveBtn.disabled = false;
+                    if (statusMsg) {
+                        statusMsg.style.color = '#f87171';
+                        statusMsg.textContent = `❌ Archive failed: ${err.message}`;
+                    }
+                    window.UI.showToast(`Log Archiving failed: ${err.message}`, 'danger');
+                }
             }
-        } catch (err) {
-            console.error("Client SQL.js execution error:", err);
-            window.UI.showToast(`SQL parsing error: ${err.message}`, "danger");
-        }
-    };
-    reader.readAsArrayBuffer(file);
+        });
+    }
 }
+
+
 
 
 // --- GLOBAL DIALOG MODAL SUBMISSIONS ---

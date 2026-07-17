@@ -66,13 +66,66 @@ async function fetchDatabaseFromGitHub(config) {
     throw new Error(`Failed to load database.json from GitHub: ${res.statusText}`);
 }
 
-// Save database to GitHub (optimized to write a single database.json)
-async function saveDatabaseToGitHub(config) {
+// Generic function to save any JSON file to GitHub
+async function saveJsonFileToGitHub(config, filename, data, commitMessage, force = false, forceSha = null) {
     const { repo, token, branch, folder } = config;
     const pathPrefix = folder ? `${folder.replace(/\/$/, '')}/` : '';
     const headers = {
         'Authorization': `token ${token}`,
         'Content-Type': 'application/json',
+        'Accept': 'application/vnd.github.v3+json'
+    };
+
+    // 1. Fetch current file details to get the SHA
+    const url = `https://api.github.com/repos/${repo}/contents/${pathPrefix}${filename}?ref=${branch}&t=` + Date.now();
+    const getRes = await fetch(url, { headers, cache: 'no-store' });
+    let sha = forceSha;
+    if (!sha && getRes.ok) {
+        const fileData = await getRes.json();
+        sha = fileData.sha;
+    }
+
+    const contentJson = JSON.stringify(data, null, 2);
+    const base64Content = btoa(unescape(encodeURIComponent(contentJson)));
+
+    const body = {
+        message: commitMessage || `Update ${filename} via Progress Tracker`,
+        content: base64Content,
+        branch
+    };
+    if (sha) {
+        body.sha = sha;
+    }
+
+    // 2. Write update to GitHub
+    const putRes = await fetch(url.split('?')[0], {
+        method: 'PUT',
+        headers,
+        body: JSON.stringify(body)
+    });
+
+    if (!putRes.ok) {
+        const errData = await putRes.json().catch(() => ({}));
+        throw new Error(`Failed to save ${filename}: ${errData.message || putRes.statusText}`);
+    }
+
+    try {
+        const putResData = await putRes.json();
+        if (putResData.content && putResData.content.sha) {
+            return putResData.content.sha;
+        }
+    } catch (e) {
+        console.error(`Failed to parse PUT response JSON for ${filename}:`, e);
+    }
+    return sha;
+}
+
+// Save database to GitHub (optimized to write a single database.json)
+async function saveDatabaseToGitHub(config, commitMessage = null, force = false) {
+    const { repo, token, branch, folder } = config;
+    const pathPrefix = folder ? `${folder.replace(/\/$/, '')}/` : '';
+    const headers = {
+        'Authorization': `token ${token}`,
         'Accept': 'application/vnd.github.v3+json'
     };
 
@@ -85,35 +138,21 @@ async function saveDatabaseToGitHub(config) {
         sha = fileData.sha;
     }
 
+    // Conflict Check
+    const loadedSha = localStorage.getItem('sm_progress_loaded_sha');
+    if (loadedSha && sha && loadedSha !== sha && !force) {
+        console.warn(`Conflict detected! Loaded SHA: ${loadedSha}, Remote SHA: ${sha}`);
+        throw new Error("CONFLICT_DETECTED");
+    }
+
     // 2. Prepare unified data payload
     const unifiedData = {
         projects: getItems(STORAGE_KEYS.PROJECTS),
         steps: getItems(STORAGE_KEYS.STEPS),
         logs: getItems(STORAGE_KEYS.LOGS)
     };
-    const contentJson = JSON.stringify(unifiedData, null, 2);
-    const base64Content = btoa(unescape(encodeURIComponent(contentJson)));
 
-    const body = {
-        message: "Update database.json via Progress Tracker",
-        content: base64Content,
-        branch
-    };
-    if (sha) {
-        body.sha = sha;
-    }
-
-    // 3. Write update to GitHub
-    const putRes = await fetch(url.split('?')[0], {
-        method: 'PUT',
-        headers,
-        body: JSON.stringify(body)
-    });
-
-    if (!putRes.ok) {
-        const errData = await putRes.json().catch(() => ({}));
-        throw new Error(`Failed to save database.json: ${errData.message || putRes.statusText}`);
-    }
+    return await saveJsonFileToGitHub(config, 'database.json', unifiedData, commitMessage, force, sha);
 }
 
 function autoDetectGitHubRepo() {
@@ -161,6 +200,10 @@ async function initStore() {
                     setItems(STORAGE_KEYS.PROJECTS, data.projects);
                     setItems(STORAGE_KEYS.STEPS, data.steps);
                     setItems(STORAGE_KEYS.LOGS, data.logs);
+                    if (fileData.sha) {
+                        localStorage.setItem('sm_progress_loaded_sha', fileData.sha);
+                        console.log("Saved loaded database SHA:", fileData.sha);
+                    }
                     console.log("Database successfully synced in real-time from GitHub API.");
                     return;
                 }
@@ -200,18 +243,48 @@ async function initStore() {
 }
 
 // Trigger background server file write sync or GitHub update sync
-async function triggerSync() {
+async function triggerSync(commitMessage = null, force = false) {
     const gitHubConfig = getGitHubConfig();
     if (gitHubConfig.enabled && gitHubConfig.repo && gitHubConfig.token) {
         try {
             console.log("GitHub Sync is active. Syncing data to GitHub...");
             window.dispatchEvent(new CustomEvent('github-sync-start'));
-            await saveDatabaseToGitHub(gitHubConfig);
+            const newSha = await saveDatabaseToGitHub(gitHubConfig, commitMessage, force);
+            if (newSha) {
+                localStorage.setItem('sm_progress_loaded_sha', newSha);
+            }
             console.log("Database successfully synced to GitHub.");
             window.dispatchEvent(new CustomEvent('github-sync-success'));
         } catch (e) {
             console.error("Could not sync database to GitHub:", e);
-            window.dispatchEvent(new CustomEvent('github-sync-error', { detail: e.message }));
+            if (e.message === "CONFLICT_DETECTED") {
+                window.dispatchEvent(new CustomEvent('github-sync-conflict'));
+                const doForce = confirm(
+                    "⚠️ CONFLICT DETECTED!\n\n" +
+                    "Another team member has updated the database since you loaded or refreshed the page.\n" +
+                    "Overwriting will erase their changes.\n\n" +
+                    "Do you want to FORCE overwrite the repository with your local changes?"
+                );
+                if (doForce) {
+                    try {
+                        console.log("Forcing sync to GitHub...");
+                        window.dispatchEvent(new CustomEvent('github-sync-start'));
+                        const forcedSha = await saveDatabaseToGitHub(gitHubConfig, commitMessage, true);
+                        if (forcedSha) {
+                            localStorage.setItem('sm_progress_loaded_sha', forcedSha);
+                        }
+                        console.log("Database successfully synced to GitHub (forced).");
+                        window.dispatchEvent(new CustomEvent('github-sync-success'));
+                    } catch (retryError) {
+                        console.error("Forced sync failed:", retryError);
+                        window.dispatchEvent(new CustomEvent('github-sync-error', { detail: retryError.message }));
+                    }
+                } else {
+                    window.UI.showToast("Sync cancelled. Please reload the page to pull the latest changes.", "warning");
+                }
+            } else {
+                window.dispatchEvent(new CustomEvent('github-sync-error', { detail: e.message }));
+            }
         }
         return;
     }
@@ -313,7 +386,7 @@ function addProject(project) {
     });
 
     recalculateProjectStats(newId);
-    triggerSync();
+    triggerSync(`Add project: "${newProject.name}"`);
     return newProject;
 }
 
@@ -321,19 +394,25 @@ function updateProject(id, fields) {
     const projects = getItems(STORAGE_KEYS.PROJECTS);
     const index = projects.findIndex(p => p.id === Number(id));
     if (index !== -1) {
+        const oldName = projects[index].name;
         projects[index] = { ...projects[index], ...fields };
         setItems(STORAGE_KEYS.PROJECTS, projects);
         recalculateProjectStats(id);
-        triggerSync();
+        triggerSync(`Update project: "${oldName}"`);
         return projects[index];
     }
     return null;
 }
 
 function deleteProject(id) {
+    // Retrieve project name before delete
+    const projects = getItems(STORAGE_KEYS.PROJECTS);
+    const proj = projects.find(p => p.id === Number(id));
+    const projName = proj ? proj.name : `ID ${id}`;
+
     // Delete project
-    const projects = getItems(STORAGE_KEYS.PROJECTS).filter(p => p.id !== Number(id));
-    setItems(STORAGE_KEYS.PROJECTS, projects);
+    const filteredProjects = projects.filter(p => p.id !== Number(id));
+    setItems(STORAGE_KEYS.PROJECTS, filteredProjects);
 
     // Cascade delete steps
     const steps = getItems(STORAGE_KEYS.STEPS).filter(s => s.project_id !== Number(id));
@@ -347,7 +426,7 @@ function deleteProject(id) {
         return l;
     });
     setItems(STORAGE_KEYS.LOGS, logs);
-    triggerSync();
+    triggerSync(`Delete project: "${projName}"`);
 }
 
 // --- STEPS CRUD ---
@@ -403,7 +482,10 @@ function addStep(step) {
     steps.push(newStep);
     setItems(STORAGE_KEYS.STEPS, steps);
     recalculateProjectStats(step.project_id);
-    triggerSync();
+    
+    const proj = getProject(step.project_id);
+    const projName = proj ? proj.name : `ID ${step.project_id}`;
+    triggerSync(`Add schedule step "${newStep.step_code}" to project "${projName}"`);
     return newStep;
 }
 
@@ -418,6 +500,10 @@ function updateStep(stepId, fields) {
             duration = Math.max(1, Math.ceil((end - start) / (1000 * 60 * 60 * 24)));
         }
 
+        const stepCode = steps[index].step_code;
+        const proj = getProject(steps[index].project_id);
+        const projName = proj ? proj.name : `ID ${steps[index].project_id}`;
+
         steps[index] = { 
             ...steps[index], 
             ...fields, 
@@ -425,7 +511,7 @@ function updateStep(stepId, fields) {
         };
         setItems(STORAGE_KEYS.STEPS, steps);
         recalculateProjectStats(steps[index].project_id);
-        triggerSync();
+        triggerSync(`Update step "${stepCode}" in project "${projName}"`);
         return steps[index];
     }
     return null;
@@ -438,7 +524,10 @@ function deleteStep(stepId) {
         const filteredSteps = steps.filter(s => s.id !== Number(stepId));
         setItems(STORAGE_KEYS.STEPS, filteredSteps);
         recalculateProjectStats(step.project_id);
-        triggerSync();
+        
+        const proj = getProject(step.project_id);
+        const projName = proj ? proj.name : `ID ${step.project_id}`;
+        triggerSync(`Delete step "${step.step_code}" from project "${projName}"`);
     }
 }
 
@@ -512,14 +601,18 @@ function addLog(log) {
 
     logs.push(newLog);
     setItems(STORAGE_KEYS.LOGS, logs);
-    triggerSync();
+    triggerSync(`Add daily log by ${newLog.engineer} for project "${projectName}"`);
     return newLog;
 }
 
 function deleteLog(logId) {
-    const logs = getItems(STORAGE_KEYS.LOGS).filter(l => l.id !== Number(logId));
-    setItems(STORAGE_KEYS.LOGS, logs);
-    triggerSync();
+    const logs = getItems(STORAGE_KEYS.LOGS);
+    const log = logs.find(l => l.id === Number(logId));
+    const logDetails = log ? `by ${log.engineer} on ${log.date}` : `ID ${logId}`;
+    
+    const filteredLogs = logs.filter(l => l.id !== Number(logId));
+    setItems(STORAGE_KEYS.LOGS, filteredLogs);
+    triggerSync(`Delete daily log entry ${logDetails}`);
 }
 
 // --- BACKUP & EXPORT/IMPORT ---
@@ -548,7 +641,7 @@ function importJSON(jsonString) {
         // Recalculate stats for all projects
         const projects = getItems(STORAGE_KEYS.PROJECTS);
         projects.forEach(p => recalculateProjectStats(p.id));
-        triggerSync();
+        triggerSync("Import full database backup from JSON file");
         return true;
     } catch (e) {
         console.error("Failed to import JSON", e);
@@ -556,54 +649,139 @@ function importJSON(jsonString) {
     }
 }
 
-// SQLite File Importer using sql.js WebAssembly
-async function importSQLite(arrayBuffer, SQL) {
-    try {
-        const db = new SQL.Database(new Uint8Array(arrayBuffer));
-        
-        // Helper to query and map results
-        const queryTable = (tableName) => {
-            const res = db.exec(`SELECT * FROM ${tableName}`);
-            if (res.length === 0) return [];
-            
-            const columns = res[0].columns;
-            const values = res[0].values;
-            
-            return values.map(row => {
-                const obj = {};
-                columns.forEach((col, idx) => {
-                    obj[col] = row[idx];
-                });
-                return obj;
-            });
-        };
 
-        const sqliteProjects = queryTable('projects');
-        const sqliteSteps = queryTable('steps');
-        const sqliteLogs = queryTable('daily_logs');
 
-        if (sqliteProjects.length === 0) {
-            throw new Error("No projects found in the sqlite database.");
-        }
-
-        // Write directly to localstorage
-        setItems(STORAGE_KEYS.PROJECTS, sqliteProjects);
-        setItems(STORAGE_KEYS.STEPS, sqliteSteps);
-        setItems(STORAGE_KEYS.LOGS, sqliteLogs);
-
-        // Run dynamic stats update
-        sqliteProjects.forEach(p => recalculateProjectStats(p.id));
-        triggerSync();
-        return {
-            success: true,
-            projects: sqliteProjects.length,
-            steps: sqliteSteps.length,
-            logs: sqliteLogs.length
-        };
-    } catch (err) {
-        console.error("Failed parsing SQLite database in client WebAssembly:", err);
-        return { success: false, error: err.message };
+// Archive older logs to database_archive.json
+async function archiveOlderLogs(keepCount = 30) {
+    const gitHubConfig = getGitHubConfig();
+    if (!gitHubConfig.enabled || !gitHubConfig.repo || !gitHubConfig.token) {
+        throw new Error("GitHub Sync must be enabled and configured to archive logs.");
     }
+
+    const { repo, token, branch, folder } = gitHubConfig;
+    const pathPrefix = folder ? `${folder.replace(/\/$/, '')}/` : '';
+    const headers = {
+        'Authorization': `token ${token}`,
+        'Accept': 'application/vnd.github.v3+json'
+    };
+
+    // 1. Fetch all local logs
+    const allLogs = getItems(STORAGE_KEYS.LOGS);
+    if (allLogs.length <= keepCount) {
+        return { success: true, message: `Only ${allLogs.length} logs exist. No need to archive (keep limit is ${keepCount}).` };
+    }
+
+    // Sort logs descending by date and then by ID to identify latest logs
+    const sortedLogs = [...allLogs].sort((a, b) => b.date.localeCompare(a.date) || b.id - a.id);
+    
+    // Split into recent and archived
+    const recentLogs = sortedLogs.slice(0, keepCount);
+    const toArchiveLogs = sortedLogs.slice(keepCount);
+
+    // 2. Fetch current database_archive.json to merge
+    let existingArchiveLogs = [];
+    const url = `https://api.github.com/repos/${repo}/contents/${pathPrefix}database_archive.json?ref=${branch}&t=` + Date.now();
+    
+    try {
+        const getRes = await fetch(url, { headers, cache: 'no-store' });
+        if (getRes.ok) {
+            const fileData = await getRes.json();
+            const decoded = decodeURIComponent(escape(atob(fileData.content.replace(/\s/g, ''))));
+            const data = JSON.parse(decoded);
+            existingArchiveLogs = data.logs || [];
+        }
+    } catch (e) {
+        console.warn("No existing database_archive.json found, or failed to parse. Creating new archive.", e);
+    }
+
+    // Merge logs ensuring no duplicate IDs
+    const mergedArchiveLogs = [...existingArchiveLogs];
+    toArchiveLogs.forEach(log => {
+        if (!mergedArchiveLogs.some(existing => existing.id === log.id)) {
+            mergedArchiveLogs.push(log);
+        }
+    });
+
+    // 3. Write database_archive.json to GitHub
+    const archiveData = { logs: mergedArchiveLogs };
+    await saveJsonFileToGitHub(gitHubConfig, 'database_archive.json', archiveData, "Archive older daily logs to database_archive.json");
+
+    // 4. Update local storage for active database (projects & steps remain unchanged)
+    setItems(STORAGE_KEYS.LOGS, recentLogs);
+
+    // 5. Save updated database.json to GitHub
+    const newDbSha = await saveDatabaseToGitHub(gitHubConfig, "Trim daily logs to database.json after archiving");
+    if (newDbSha) {
+        localStorage.setItem('sm_progress_loaded_sha', newDbSha);
+    }
+
+    return {
+        success: true,
+        archivedCount: toArchiveLogs.length,
+        totalArchived: mergedArchiveLogs.length
+    };
+}
+
+// Fetch and merge archived logs from GitHub (or static fallbacks)
+async function loadArchivedLogs() {
+    const gitHubConfig = getGitHubConfig();
+    const detected = autoDetectGitHubRepo();
+    let archiveData = { logs: [] };
+
+    // If GitHub Sync is configured or host is github.io
+    if ((gitHubConfig.enabled && gitHubConfig.repo) || detected) {
+        try {
+            const repo = gitHubConfig.repo || `${detected.owner}/${detected.repo}`;
+            const branch = gitHubConfig.branch || 'main';
+            const token = gitHubConfig.token;
+            const folder = gitHubConfig.folder || '';
+            const pathPrefix = folder ? `${folder.replace(/\/$/, '')}/` : '';
+
+            const headers = { 'Accept': 'application/vnd.github.v3+json' };
+            if (token) {
+                headers['Authorization'] = `token ${token}`;
+            }
+
+            const url = `https://api.github.com/repos/${repo}/contents/${pathPrefix}database_archive.json?ref=${branch}&t=` + Date.now();
+            const res = await fetch(url, { headers, cache: 'no-store' });
+            if (res.ok) {
+                const fileData = await res.json();
+                const decoded = decodeURIComponent(escape(atob(fileData.content.replace(/\s/g, ''))));
+                archiveData = JSON.parse(decoded);
+                console.log(`Loaded ${archiveData.logs?.length || 0} logs from database_archive.json via GitHub API.`);
+            }
+        } catch (e) {
+            console.warn("Could not load database_archive.json from GitHub API, trying static fallback:", e);
+        }
+    }
+
+    // Fallback: static file URL
+    if (archiveData.logs.length === 0) {
+        try {
+            const res = await fetch('database_archive.json?t=' + Date.now());
+            if (res.ok) {
+                archiveData = await res.json();
+                console.log(`Loaded ${archiveData.logs?.length || 0} logs from database_archive.json via static file.`);
+            }
+        } catch (e) {
+            console.warn("Could not load database_archive.json from static URL:", e);
+        }
+    }
+
+    // Merge active logs and archived logs dynamically
+    const activeLogs = getItems(STORAGE_KEYS.LOGS);
+    const combinedLogs = [...activeLogs];
+
+    if (archiveData.logs && Array.isArray(archiveData.logs)) {
+        archiveData.logs.forEach(log => {
+            if (!combinedLogs.some(existing => existing.id === log.id)) {
+                combinedLogs.push(log);
+            }
+        });
+    }
+
+    // Return sorted logs descending by date & ID
+    return combinedLogs.sort((a, b) => b.date.localeCompare(a.date) || b.id - a.id);
 }
 
 // Attach to window global namespace
@@ -624,9 +802,10 @@ window.Store = {
     deleteLog,
     exportJSON,
     importJSON,
-    importSQLite,
     getGitHubConfig,
-    saveGitHubConfig
+    saveGitHubConfig,
+    archiveOlderLogs,
+    loadArchivedLogs
 };
 
 // --- MOCK SEED DATA ---
