@@ -63,7 +63,7 @@
         <div class="modal-card glass">
             <div class="modal-header">
                 <h3>Create New Work Item Project</h3>
-                <button class="modal-close" onclick="this.closest('.modal-overlay').classList.remove('active')">✖</button>
+                <button class="modal-close" onclick="window.UI.closeModal('new-project-modal')">✖</button>
             </div>
             <form id="new-project-form" class="standard-form">
                 <div class="modal-body">
@@ -100,7 +100,7 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" onclick="this.closest('.modal-overlay').classList.remove('active')">Cancel</button>
+                    <button type="button" class="btn btn-secondary" onclick="window.UI.closeModal('new-project-modal')">Cancel</button>
                     <button type="submit" class="btn btn-primary">Create Project</button>
                 </div>
             </form>
@@ -112,7 +112,7 @@
         <div class="modal-card glass">
             <div class="modal-header">
                 <h3 id="step-modal-title">Add New Schedule Timeline Step</h3>
-                <button class="modal-close" onclick="this.closest('.modal-overlay').classList.remove('active')">✖</button>
+                <button class="modal-close" onclick="window.UI.closeModal('new-step-modal')">✖</button>
             </div>
             <form id="new-step-form" class="standard-form">
                 <div class="modal-body">
@@ -176,7 +176,7 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" onclick="this.closest('.modal-overlay').classList.remove('active')">Cancel</button>
+                    <button type="button" class="btn btn-secondary" onclick="window.UI.closeModal('new-step-modal')">Cancel</button>
                     <button type="submit" class="btn btn-primary" id="step-modal-submit-btn">Save Step</button>
                 </div>
             </form>
@@ -188,7 +188,7 @@
         <div class="modal-card glass">
             <div class="modal-header">
                 <h3>Submit Project Daily Log Update</h3>
-                <button class="modal-close" onclick="this.closest('.modal-overlay').classList.remove('active')">✖</button>
+                <button class="modal-close" onclick="window.UI.closeModal('new-log-modal')">✖</button>
             </div>
             <form id="new-log-form" class="standard-form">
                 <div class="modal-body">
@@ -223,7 +223,7 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" onclick="this.closest('.modal-overlay').classList.remove('active')">Cancel</button>
+                    <button type="button" class="btn btn-secondary" onclick="window.UI.closeModal('new-log-modal')">Cancel</button>
                     <button type="submit" class="btn btn-primary">Archive Log Entry</button>
                 </div>
             </form>
