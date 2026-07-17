@@ -49,9 +49,9 @@ async function fetchDatabaseFromGitHub(config) {
         'Accept': 'application/vnd.github.v3+json'
     };
 
-    // 1. Fetch directory listing to find target files
-    const dirUrl = `https://api.github.com/repos/${repo}/contents/${folder || ''}?ref=${branch}`;
-    const dirRes = await fetch(dirUrl, { headers });
+    // 1. Fetch directory listing to find target files (bypass caching with cache: 'no-store')
+    const dirUrl = `https://api.github.com/repos/${repo}/contents/${folder || ''}?ref=${branch}&t=` + Date.now();
+    const dirRes = await fetch(dirUrl, { headers, cache: 'no-store' });
     if (!dirRes.ok) {
         throw new Error(`Failed to list GitHub directory: ${dirRes.statusText}`);
     }
@@ -64,10 +64,10 @@ async function fetchDatabaseFromGitHub(config) {
     let steps = [];
     let logs = [];
 
-    // Helper to fetch file content via the API (avoiding CORS issues on raw.githubusercontent.com)
+    // Helper to fetch file content via the API (avoiding CORS and caching issues)
     async function fetchFileContent(filePath) {
-        const url = `https://api.github.com/repos/${repo}/contents/${filePath}?ref=${branch}`;
-        const res = await fetch(url, { headers });
+        const url = `https://api.github.com/repos/${repo}/contents/${filePath}?ref=${branch}&t=` + Date.now();
+        const res = await fetch(url, { headers, cache: 'no-store' });
         if (res.ok) {
             const fileData = await res.json();
             // Decode base64 (safely preserving UTF-8 Unicode characters)
