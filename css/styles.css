@@ -221,6 +221,46 @@ a:hover {
     border: 1px solid rgba(226, 232, 240, 0.8);
 }
 
+.brand-logo-img {
+    height: 38px;
+    object-fit: contain;
+}
+
+.nav-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.settings-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.8);
+    border: 1px solid rgba(226, 232, 240, 0.8);
+    color: var(--text-muted);
+    font-size: 18px;
+    cursor: pointer;
+    text-decoration: none;
+    transition: all var(--transition-fast);
+}
+
+.settings-btn:hover {
+    background: var(--color-primary-light);
+    color: var(--color-primary);
+    transform: rotate(30deg);
+    border-color: rgba(59, 130, 246, 0.2);
+}
+
+.settings-btn.active {
+    background: var(--color-primary);
+    color: white;
+    border-color: var(--color-primary);
+}
+
 .content-viewport {
     padding: 32px;
     flex-grow: 1;

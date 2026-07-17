@@ -66,6 +66,16 @@ function updateSidebarActiveState(hash) {
         }
     });
 
+    // Right-aligned settings button highlight
+    const settingsNavBtn = document.getElementById('settings-nav-btn');
+    if (settingsNavBtn) {
+        if (hash === '#/database') {
+            settingsNavBtn.classList.add('active');
+        } else {
+            settingsNavBtn.classList.remove('active');
+        }
+    }
+
     // Mobile Bottom Nav highlights
     document.querySelectorAll('.mobile-bottom-nav a').forEach(link => {
         const href = link.getAttribute('href');
