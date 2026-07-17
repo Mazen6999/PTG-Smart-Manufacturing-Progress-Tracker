@@ -41,76 +41,32 @@ function saveGitHubConfig(config) {
     localStorage.setItem(STORAGE_KEYS.GITHUB_CONFIG, JSON.stringify(config));
 }
 
-// Fetch database from GitHub
+// Fetch database from GitHub (optimized to retrieve single database.json)
 async function fetchDatabaseFromGitHub(config) {
     const { repo, token, branch, folder } = config;
+    const pathPrefix = folder ? `${folder.replace(/\/$/, '')}/` : '';
     const headers = {
         'Authorization': `token ${token}`,
         'Accept': 'application/vnd.github.v3+json'
     };
 
-    // 1. Fetch directory listing to find target files (bypass caching with cache: 'no-store')
-    const dirUrl = `https://api.github.com/repos/${repo}/contents/${folder || ''}?ref=${branch}&t=` + Date.now();
-    const dirRes = await fetch(dirUrl, { headers, cache: 'no-store' });
-    if (!dirRes.ok) {
-        throw new Error(`Failed to list GitHub directory: ${dirRes.statusText}`);
+    const url = `https://api.github.com/repos/${repo}/contents/${pathPrefix}database.json?ref=${branch}&t=` + Date.now();
+    const res = await fetch(url, { headers, cache: 'no-store' });
+    if (res.ok) {
+        const fileData = await res.json();
+        // Decode base64 safely (preserving UTF-8 Unicode characters)
+        const decoded = decodeURIComponent(escape(atob(fileData.content.replace(/\s/g, ''))));
+        const data = JSON.parse(decoded);
+        return {
+            projects: data.projects || [],
+            steps: data.steps || [],
+            logs: data.logs || []
+        };
     }
-    const files = await dirRes.json();
-
-    const projectsFile = files.find(f => f.name === 'projects.json');
-    const logFiles = files.filter(f => f.name.startsWith('logs_') && f.name.endsWith('.json'));
-
-    let projects = [];
-    let steps = [];
-    let logs = [];
-
-    // Helper to fetch file content via the API (avoiding CORS and caching issues)
-    async function fetchFileContent(filePath) {
-        const url = `https://api.github.com/repos/${repo}/contents/${filePath}?ref=${branch}&t=` + Date.now();
-        const res = await fetch(url, { headers, cache: 'no-store' });
-        if (res.ok) {
-            const fileData = await res.json();
-            // Decode base64 (safely preserving UTF-8 Unicode characters)
-            const decoded = decodeURIComponent(escape(atob(fileData.content.replace(/\s/g, ''))));
-            return JSON.parse(decoded);
-        }
-        throw new Error(`Failed to load file: ${filePath}`);
-    }
-
-    // 2. Fetch projects.json (projects + steps)
-    if (projectsFile) {
-        try {
-            const projData = await fetchFileContent(projectsFile.path);
-            projects = projData.projects || [];
-            steps = projData.steps || [];
-        } catch (e) {
-            console.error("Failed to read projects.json:", e);
-        }
-    }
-
-    // 3. Fetch all log files in parallel
-    if (logFiles.length > 0) {
-        const logPromises = logFiles.map(async (file) => {
-            try {
-                return await fetchFileContent(file.path);
-            } catch (err) {
-                console.warn(`Failed to fetch log file ${file.name}:`, err);
-            }
-            return null;
-        });
-
-        const logsArrays = await Promise.all(logPromises);
-        logsArrays.forEach(arr => {
-            if (arr && Array.isArray(arr)) {
-                logs = logs.concat(arr);
-            }
-        });
-    }
-
-    return { projects, steps, logs };
+    throw new Error(`Failed to load database.json from GitHub: ${res.statusText}`);
 }
 
-// Save database to GitHub (creates/updates files and deletes unreferenced logs)
+// Save database to GitHub (optimized to write a single database.json)
 async function saveDatabaseToGitHub(config) {
     const { repo, token, branch, folder } = config;
     const pathPrefix = folder ? `${folder.replace(/\/$/, '')}/` : '';
@@ -120,115 +76,44 @@ async function saveDatabaseToGitHub(config) {
         'Accept': 'application/vnd.github.v3+json'
     };
 
-    // 1. Fetch current directory state to get SHAs
-    const dirUrl = `https://api.github.com/repos/${repo}/contents/${folder || ''}?ref=${branch}`;
-    const dirRes = await fetch(dirUrl, { headers: { 'Authorization': `token ${token}` } });
-    let existingFiles = [];
-    if (dirRes.ok) {
-        existingFiles = await dirRes.json();
-    } else if (dirRes.status !== 404) {
-        throw new Error(`Failed to fetch current directory state: ${dirRes.statusText}`);
+    // 1. Fetch current database.json details to get the SHA
+    const url = `https://api.github.com/repos/${repo}/contents/${pathPrefix}database.json?ref=${branch}&t=` + Date.now();
+    const getRes = await fetch(url, { headers, cache: 'no-store' });
+    let sha = null;
+    if (getRes.ok) {
+        const fileData = await getRes.json();
+        sha = fileData.sha;
     }
 
-    // 2. Write projects.json
-    const projectsData = {
+    // 2. Prepare unified data payload
+    const unifiedData = {
         projects: getItems(STORAGE_KEYS.PROJECTS),
-        steps: getItems(STORAGE_KEYS.STEPS)
+        steps: getItems(STORAGE_KEYS.STEPS),
+        logs: getItems(STORAGE_KEYS.LOGS)
     };
-    const projectsJson = JSON.stringify(projectsData, null, 2);
-    const projectsSha = existingFiles.find(f => f.name === 'projects.json')?.sha;
+    const contentJson = JSON.stringify(unifiedData, null, 2);
+    const base64Content = btoa(unescape(encodeURIComponent(contentJson)));
 
-    // Helper to upload a file to GitHub
-    async function uploadFile(filename, content, sha) {
-        const url = `https://api.github.com/repos/${repo}/contents/${pathPrefix}${filename}`;
-        const base64Content = btoa(unescape(encodeURIComponent(content)));
-        
-        const body = {
-            message: `Update ${filename} via Progress Tracker`,
-            content: base64Content,
-            branch
-        };
-        if (sha) {
-            body.sha = sha;
-        }
-
-        const res = await fetch(url, {
-            method: 'PUT',
-            headers,
-            body: JSON.stringify(body)
-        });
-
-        if (!res.ok) {
-            const errData = await res.json().catch(() => ({}));
-            throw new Error(`Failed to save ${filename}: ${errData.message || res.statusText}`);
-        }
+    const body = {
+        message: "Update database.json via Progress Tracker",
+        content: base64Content,
+        branch
+    };
+    if (sha) {
+        body.sha = sha;
     }
 
-    // Helper to delete a file from GitHub
-    async function deleteFile(filename, sha) {
-        const url = `https://api.github.com/repos/${repo}/contents/${pathPrefix}${filename}`;
-        const body = {
-            message: `Delete ${filename} (unreferenced engineer logs)`,
-            sha,
-            branch
-        };
-
-        const res = await fetch(url, {
-            method: 'DELETE',
-            headers,
-            body: JSON.stringify(body)
-        });
-
-        if (!res.ok) {
-            const errData = await res.json().catch(() => ({}));
-            throw new Error(`Failed to delete ${filename}: ${errData.message || res.statusText}`);
-        }
-    }
-
-    // Upload projects.json
-    await uploadFile('projects.json', projectsJson, projectsSha);
-
-    // 3. Upload engineer logs
-    const logs = getItems(STORAGE_KEYS.LOGS);
-    const writtenLogFiles = new Set();
-    const savePromises = [];
-
-    if (logs.length > 0) {
-        const groupedLogs = {};
-        logs.forEach(log => {
-            const engineer = log.engineer || 'Unknown';
-            const safeName = engineer.replace(/[^a-zA-Z0-9]/g, '');
-            const key = safeName || 'Unknown';
-            if (!groupedLogs[key]) {
-                groupedLogs[key] = [];
-            }
-            groupedLogs[key].push(log);
-        });
-
-        for (const [engineerName, engineerLogs] of Object.entries(groupedLogs)) {
-            const filename = `logs_${engineerName}.json`;
-            writtenLogFiles.add(filename);
-
-            const content = JSON.stringify(engineerLogs, null, 2);
-            const sha = existingFiles.find(f => f.name === filename)?.sha;
-            
-            savePromises.push(uploadFile(filename, content, sha));
-        }
-    }
-
-    await Promise.all(savePromises);
-
-    // 4. Delete old log files no longer referenced
-    const deletePromises = [];
-    existingFiles.forEach(file => {
-        if (file.name.startsWith('logs_') && file.name.endsWith('.json')) {
-            if (!writtenLogFiles.has(file.name)) {
-                deletePromises.push(deleteFile(file.name, file.sha));
-            }
-        }
+    // 3. Write update to GitHub
+    const putRes = await fetch(url.split('?')[0], {
+        method: 'PUT',
+        headers,
+        body: JSON.stringify(body)
     });
 
-    await Promise.all(deletePromises);
+    if (!putRes.ok) {
+        const errData = await putRes.json().catch(() => ({}));
+        throw new Error(`Failed to save database.json: ${errData.message || putRes.statusText}`);
+    }
 }
 
 // Check if storage is empty and initialize (syncs from server or GitHub if configured)
