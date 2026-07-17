@@ -7,7 +7,7 @@ This document details the vision, architecture, and core design principles of th
 ## 🎯 1. Project Vision & Purpose
 * **The Goal:** Migrate legacy Excel progress trackers into an interactive, high-fidelity client-side Single Page Application (SPA).
 * **The Target Audience:** The Prometeon Smart Manufacturing Team (including Mazen, Nada, Tareq, Ramy, and other collaborators).
-* **Deployment:** Hosted completely serverless on **GitHub Pages**: [Live Website](https://mazen6999.github.io/PTG-Smart-Manufacturing-Progress-Tracker/).
+* **Deployment:** Hosted completely serverless on **GitHub Pages**: [Live Website](https://mazen-shams.github.io/PTG-Smart-Manufacturing-Progress-Tracker/).
 * **Sync Mode:** Real-time bi-directional sync with the GitHub repository.
 
 ---
