@@ -11,16 +11,27 @@ By replacing the local PowerShell HTTP server with direct **GitHub REST API inte
 
 ---
 
-## 👥 Team Setup (One-Time Instruction)
-To protect editing capabilities while keeping the site public, data updates require a Personal Access Token (PAT):
+## 👥 Team & Collaborators Setup (Onboarding)
 
-1. **Generate Token:** Click **[Generate GitHub PAT](https://github.com/settings/tokens/new?scopes=repo&description=SM%20Progress%20Tracker)** (pre-checks the `repo` scope for you).
-2. **Save Token:** Scroll to the bottom, click **Generate token**, and copy the code starting with `ghp_`.
-3. **Configure App:** Open the live website URL, navigate to the **Settings** page, check **Enable GitHub Sync**, and fill in the details:
-   * **Repository**: `Mazen6999/PTG-Smart-Manufacturing-Progress-Tracker`
-   * **Token**: *Paste your generated ghp_ token*
-   * **Branch**: `main`
-4. Click **Save GitHub Settings**. The app will immediately synchronize the latest timeline data and daily logs directly from the repository.
+Since this repository is public, anyone can **view** the dashboards, Gantt charts, and daily logs. However, **only authorized team members** can add projects, edit schedule steps, or submit logs.
+
+Follow these two quick steps to authorize a team member (e.g. Nada, Tareq, Ramy):
+
+### Step 1: Add them as Repository Collaborators (Admin Action)
+1. Go to your repository settings page: **[Settings → Collaborators](https://github.com/Mazen6999/PTG-Smart-Manufacturing-Progress-Tracker/settings/collaboration)**.
+2. Click **Add People** and invite them using their GitHub username or email.
+3. Once they accept the invitation, they are authorized to commit changes to the database.
+
+### Step 2: Connect the Web App (Team Member Action)
+Each authorized engineer performs this one-time setup on their browser:
+1. Open the live site: **[PTG Smart Manufacturing Progress Tracker](https://mazen6999.github.io/PTG-Smart-Manufacturing-Progress-Tracker/)**.
+2. Click **[Generate GitHub PAT](https://github.com/settings/tokens/new?scopes=repo&description=SM%20Progress%20Tracker)** to generate a Personal Access Token (PAT) with `repo` scope from their GitHub account.
+3. Copy the token code (starts with `ghp_`).
+4. In the web app, navigate to the **Settings & SQLite** page, check **Enable GitHub Sync**, and fill in the details:
+   - **Repository**: `Mazen6999/PTG-Smart-Manufacturing-Progress-Tracker`
+   - **Personal Access Token**: *Paste their ghp_ token*
+   - **Branch**: `main`
+5. Click **Save GitHub Settings**. The app will immediately pull the latest projects and logs, and enable full read/write editing capabilities!
 
 ---
 
