@@ -419,9 +419,7 @@ function renderProjectDetails(id) {
                         <h3>📌 Jargon & Wiki Notes</h3>
                         <button class="btn-edit-notes" id="edit-notes-btn">✏️ Edit Notes</button>
                     </div>
-                    <div class="sticky-notes-body" id="sticky-notes-display">
-                        ${project.notes ? project.notes.replace(/\n/g, '<br>') : `<div class="sticky-notes-empty">No notes or jargon defined yet. Click Edit to add abbreviations or quick links.</div>`}
-                    </div>
+                    <div class="sticky-notes-body" id="sticky-notes-display">${project.notes ? project.notes : `<div class="sticky-notes-empty">No notes or jargon defined yet. Click Edit to add abbreviations or quick links.</div>`}</div>
                     <div id="sticky-notes-editor" style="display: none;">
                         <textarea class="sticky-notes-textarea" id="notes-textarea" placeholder="Enter project terminology, acronym definitions, or wiki links...">${project.notes || ''}</textarea>
                         <div class="sticky-notes-actions">
