@@ -226,6 +226,13 @@ a:hover {
     object-fit: contain;
 }
 
+.profile-logo-img {
+    height: 18px;
+    width: 18px;
+    object-fit: contain;
+    border-radius: 2px;
+}
+
 .nav-actions {
     display: flex;
     align-items: center;
@@ -1619,6 +1626,40 @@ a:hover {
 
 .suggestion-item.custom-task-option:hover {
     color: #2563eb !important;
+}
+
+/* ==========================================
+   RESPONSIVE MODALS & FORMS FOR MOBILE SCREENSIZES
+   ========================================== */
+.modal-card form {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    overflow: hidden;
+    min-height: 0;
+}
+
+@media (max-width: 768px) {
+    .modal-card {
+        width: 95%;
+        max-width: 95%;
+        max-height: 92vh;
+    }
+    
+    .modal-body {
+        padding: 16px 20px;
+        overflow-y: auto;
+        max-height: calc(92vh - 120px);
+    }
+    
+    .modal-footer {
+        padding: 12px 20px;
+    }
+    
+    .form-row {
+        grid-template-columns: 1fr !important;
+        gap: 12px !important;
+    }
 }
 
 
