@@ -208,8 +208,9 @@ function renderDashboard() {
                                 <td class="text-small">${proj.latest_update || '-'}</td>
                                 <td class="text-small font-semibold text-primary">${proj.next_step || '-'}</td>
                                 <td class="${blockedClass} text-small">${proj.blocked_by || '-'}</td>
-                                <td class="text-center actions-cell">
-                                    <button class="btn-icon text-danger delete-project-btn" data-id="${proj.id}" data-name="${proj.name}">🗑️</button>
+                                <td class="text-center actions-cell" style="display: flex; gap: 8px; justify-content: center; align-items: center;">
+                                    <button class="btn-icon text-primary edit-project-btn" data-id="${proj.id}" title="Edit Project">✏️</button>
+                                    <button class="btn-icon text-danger delete-project-btn" data-id="${proj.id}" data-name="${proj.name}" title="Delete Project">🗑️</button>
                                 </td>
                             </tr>
                             `;
@@ -241,11 +242,29 @@ function renderDashboard() {
         });
     });
 
+    // Project edits trigger
+    document.querySelectorAll('.edit-project-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const id = Number(btn.getAttribute('data-id'));
+            const proj = projects.find(p => p.id === id);
+            if (proj) {
+                document.getElementById('edit_proj_id').value = proj.id;
+                document.getElementById('edit_proj_name').value = proj.name || '';
+                document.getElementById('edit_proj_desc').value = proj.description || '';
+                document.getElementById('edit_proj_priority').value = proj.priority !== 9999 ? proj.priority : '9999.0';
+                document.getElementById('edit_proj_assign').value = proj.assigned_to || '';
+                document.getElementById('edit_proj_start').value = proj.start_date || '';
+                document.getElementById('edit_proj_due').value = proj.due_date || '';
+                window.UI.openModal('edit-project-modal');
+            }
+        });
+    });
+
     // Project deletes
     document.querySelectorAll('.delete-project-btn').forEach(btn => {
-        btn.addEventListener('click', (e) => {
-            const id = e.target.getAttribute('data-id');
-            const name = e.target.getAttribute('data-name');
+        btn.addEventListener('click', () => {
+            const id = btn.getAttribute('data-id');
+            const name = btn.getAttribute('data-name');
             if (confirm(`Are you sure you want to delete the project '${name}'? This deletes all associated schedule steps.`)) {
                 window.Store.deleteProject(id);
                 window.UI.showToast(`Project '${name}' deleted successfully!`, 'success');
@@ -298,14 +317,17 @@ function renderProjectDetails(id) {
         </div>
 
         <div class="project-header-card glass">
-            <div class="header-main-info">
-                <div class="title-and-status">
-                    <h2>${project.name}</h2>
-                    <span class="badge status-badge status-${project.status.replace(/ /g, '-').toLowerCase()}">
-                        ${project.status}
-                    </span>
+            <div class="header-main-info" style="width: 100%;">
+                <div class="title-and-status" style="width: 100%; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
+                    <div style="display: flex; align-items: center; gap: 16px;">
+                        <h2>${project.name}</h2>
+                        <span class="badge status-badge status-${project.status.replace(/ /g, '-').toLowerCase()}">
+                            ${project.status}
+                        </span>
+                    </div>
+                    <button class="btn btn-secondary btn-sm edit-project-btn" data-id="${project.id}" style="padding: 6px 12px; font-size: 13.5px; line-height: 1;">✏️ Edit Project</button>
                 </div>
-                <p class="project-desc">${project.description || 'No description provided.'}</p>
+                <p class="project-desc" style="margin-top: 8px;">${project.description || 'No description provided.'}</p>
             </div>
             
             <div class="header-metadata-grid">
@@ -597,6 +619,21 @@ function renderProjectDetails(id) {
     document.getElementById('open-new-log-btn').addEventListener('click', () => {
         window.UI.openModal('new-log-modal');
     });
+
+    // Wire up Edit Project button on header
+    const editProjBtn = document.querySelector('.project-header-card .edit-project-btn');
+    if (editProjBtn) {
+        editProjBtn.addEventListener('click', () => {
+            document.getElementById('edit_proj_id').value = project.id;
+            document.getElementById('edit_proj_name').value = project.name || '';
+            document.getElementById('edit_proj_desc').value = project.description || '';
+            document.getElementById('edit_proj_priority').value = project.priority !== 9999 ? project.priority : '9999.0';
+            document.getElementById('edit_proj_assign').value = project.assigned_to || '';
+            document.getElementById('edit_proj_start').value = project.start_date || '';
+            document.getElementById('edit_proj_due').value = project.due_date || '';
+            window.UI.openModal('edit-project-modal');
+        });
+    }
 
     // Wire up Sticky Notes edit / save event handlers
     const editNotesBtn = document.getElementById('edit-notes-btn');
@@ -1345,6 +1382,34 @@ function setupGlobalEventListeners() {
             
             // Redirect to the newly created project's timeline details page
             window.location.hash = `#/project/${proj.id}`;
+        });
+    }
+
+    // Submit Edit Project
+    const editProjForm = document.getElementById('edit-project-form');
+    if (editProjForm) {
+        editProjForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const id = Number(document.getElementById('edit_proj_id').value);
+            const fields = {
+                name: document.getElementById('edit_proj_name').value,
+                description: document.getElementById('edit_proj_desc').value,
+                priority: Number(document.getElementById('edit_proj_priority').value) || 9999.0,
+                assigned_to: document.getElementById('edit_proj_assign').value,
+                start_date: document.getElementById('edit_proj_start').value,
+                due_date: document.getElementById('edit_proj_due').value
+            };
+
+            window.Store.updateProject(id, fields);
+            window.UI.closeModal('edit-project-modal');
+            window.UI.showToast(`Project changes saved successfully!`, 'success');
+            
+            // Re-render view based on current route
+            if (currentRoute === ROUTES.DASHBOARD) {
+                renderDashboard();
+            } else if (currentRoute === ROUTES.PROJECT_DETAILS && currentProjectId === id) {
+                renderProjectDetails(id);
+            }
         });
     }
 
