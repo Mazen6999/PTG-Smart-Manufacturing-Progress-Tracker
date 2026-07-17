@@ -144,7 +144,7 @@ function renderDashboard() {
 
         <div class="table-card glass">
             <div class="table-responsive">
-                <table class="data-table" id="projects-table">
+                <table class="data-table dashboard-table" id="projects-table">
                     <thead>
                         <tr>
                             <th style="width: 70px;" class="text-center">Priority</th>

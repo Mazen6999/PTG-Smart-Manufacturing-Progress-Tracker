@@ -532,7 +532,10 @@ a:hover {
 }
 
 .table-responsive {
+    display: block;
+    width: 100%;
     overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
 }
 
 .data-table {
@@ -1347,11 +1350,11 @@ a:hover {
 
     /* Table Column Hiding to prevent horizontal break */
     /* Dashboard Table */
-    .data-table th:nth-child(1), .data-table td:nth-child(1), /* Priority */
-    .data-table th:nth-child(5), .data-table td:nth-child(5), /* Start Date */
-    .data-table th:nth-child(6), .data-table td:nth-child(6), /* Due Date */
-    .data-table th:nth-child(8), .data-table td:nth-child(8), /* Latest Update */
-    .data-table th:nth-child(9), .data-table td:nth-child(9)  /* Next Step */ {
+    .dashboard-table th:nth-child(1), .dashboard-table td:nth-child(1), /* Priority */
+    .dashboard-table th:nth-child(5), .dashboard-table td:nth-child(5), /* Start Date */
+    .dashboard-table th:nth-child(6), .dashboard-table td:nth-child(6), /* Due Date */
+    .dashboard-table th:nth-child(8), .dashboard-table td:nth-child(8), /* Latest Update */
+    .dashboard-table th:nth-child(9), .dashboard-table td:nth-child(9)  /* Next Step */ {
         display: none !important;
     }
 
