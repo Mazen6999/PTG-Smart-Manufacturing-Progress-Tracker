@@ -116,40 +116,75 @@ async function saveDatabaseToGitHub(config) {
     }
 }
 
+function autoDetectGitHubRepo() {
+    const host = window.location.hostname;
+    const path = window.location.pathname;
+    if (host.endsWith('github.io')) {
+        const owner = host.split('.')[0];
+        const repo = path.split('/')[1];
+        if (owner && repo) {
+            return { owner, repo };
+        }
+    }
+    return null;
+}
+
 // Check if storage is empty and initialize (syncs from server or GitHub if configured)
 async function initStore() {
     const gitHubConfig = getGitHubConfig();
-    if (gitHubConfig.enabled && gitHubConfig.repo && gitHubConfig.token) {
+    const detected = autoDetectGitHubRepo();
+
+    // If GitHub Sync is enabled, or if we auto-detect that we are hosted on GitHub Pages
+    if ((gitHubConfig.enabled && gitHubConfig.repo) || detected) {
         try {
-            console.log("GitHub Sync is active. Synchronizing from GitHub repo...");
-            const data = await fetchDatabaseFromGitHub(gitHubConfig);
-            if (data && data.projects && data.steps && data.logs) {
-                setItems(STORAGE_KEYS.PROJECTS, data.projects);
-                setItems(STORAGE_KEYS.STEPS, data.steps);
-                setItems(STORAGE_KEYS.LOGS, data.logs);
-                console.log("Database successfully synced from GitHub.");
-                return;
+            const repo = gitHubConfig.repo || `${detected.owner}/${detected.repo}`;
+            const branch = gitHubConfig.branch || 'main';
+            const token = gitHubConfig.token; // may be undefined for guest users
+            const folder = gitHubConfig.folder || '';
+            const pathPrefix = folder ? `${folder.replace(/\/$/, '')}/` : '';
+
+            console.log(`GitHub environment detected. Pulling database from repo: ${repo} (branch: ${branch})...`);
+            
+            const headers = { 'Accept': 'application/vnd.github.v3+json' };
+            if (token) {
+                headers['Authorization'] = `token ${token}`;
             }
-        } catch (e) {
-            console.warn("Could not sync database from GitHub (offline fallback active):", e);
-        }
-    } else {
-        try {
-            // Try fetching database.json from local server
-            const res = await fetch('database.json?t=' + Date.now());
+
+            const url = `https://api.github.com/repos/${repo}/contents/${pathPrefix}database.json?ref=${branch}&t=` + Date.now();
+            const res = await fetch(url, { headers, cache: 'no-store' });
+            
             if (res.ok) {
-                const data = await res.json();
+                const fileData = await res.json();
+                const decoded = decodeURIComponent(escape(atob(fileData.content.replace(/\s/g, ''))));
+                const data = JSON.parse(decoded);
                 if (data.projects && data.steps && data.logs) {
                     setItems(STORAGE_KEYS.PROJECTS, data.projects);
                     setItems(STORAGE_KEYS.STEPS, data.steps);
                     setItems(STORAGE_KEYS.LOGS, data.logs);
-                    console.log("Database successfully synced from local server database.json");
+                    console.log("Database successfully synced in real-time from GitHub API.");
                     return;
                 }
             }
         } catch (e) {
-            console.warn("Could not sync database from local server (offline fallback active):", e);
+            console.warn("Could not sync database from GitHub API (falling back to static URL):", e);
         }
+    }
+
+    // Fallback: fetch database.json from standard static website hosting (or local server if running locally)
+    try {
+        const res = await fetch('database.json?t=' + Date.now());
+        if (res.ok) {
+            const data = await res.json();
+            if (data.projects && data.steps && data.logs) {
+                setItems(STORAGE_KEYS.PROJECTS, data.projects);
+                setItems(STORAGE_KEYS.STEPS, data.steps);
+                setItems(STORAGE_KEYS.LOGS, data.logs);
+                console.log("Database successfully synced from static file URL.");
+                return;
+            }
+        }
+    } catch (e) {
+        console.warn("Could not sync database from static file URL:", e);
     }
 
     // Fallback if no server or error
