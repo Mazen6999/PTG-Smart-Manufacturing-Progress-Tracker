@@ -768,6 +768,7 @@ a:hover {
     display: flex;
     flex-direction: column;
     gap: 16px;
+    min-width: 0;
 }
 
 .gantt-header {
@@ -820,6 +821,7 @@ a:hover {
 .steps-section {
     padding: 24px;
     border-radius: var(--radius-lg);
+    min-width: 0;
 }
 
 .steps-table th {
