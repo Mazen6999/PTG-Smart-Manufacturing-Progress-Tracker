@@ -20,7 +20,7 @@ Welcome, Agent! This file outlines critical guidelines and architectural constra
 
 ## 🛠️ Code Modification Rules
 1. **Frontend Only:** DO NOT attempt to write or configure Node.js, Python, or Go backends. All rendering and routes are managed client-side inside `js/app.js` using location hashes (`#/dashboard`, `#/project/{id}`, etc.).
-2. **Vanilla CSS & Cache Busting:** Styling must be written in vanilla CSS in `css/styles.css`. Whenever you modify `css/styles.css`, you MUST increment the stylesheet query parameter version in `index.html` (e.g. `href="css/styles.css?v=1.7"`) to force immediate reload on all client browsers.
+2. **Vanilla CSS & Cache Busting:** Styling must be written in vanilla CSS in `css/styles.css`. Whenever you modify `css/styles.css` or core brand assets, you MUST increment the query parameter version in `index.html` (e.g. `href="css/styles.css?v=1.8"` or `href="p_logo.png?v=1.2"`) to force immediate reload on all client browsers.
 3. **Modal Close Handlers:** Never close modal cards manually with inline CSS triggers (e.g., `classList.remove('active')`). You MUST trigger `window.UI.closeModal(modalId)` to correctly clear the background scroll lock (`body { overflow: hidden }`).
 4. **Layout Clamping (Horizontal Scrolling):**
    - Keep horizontal scrolling isolated inside overflow containers (`.table-responsive` and `.gantt-image-container`).

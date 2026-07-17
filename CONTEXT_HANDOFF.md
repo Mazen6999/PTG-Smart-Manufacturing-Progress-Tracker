@@ -52,7 +52,8 @@ This is a **purely client-side SPA** with zero database server backends:
 
 ## 🎨 4. Branding & Visual Assets
 * **Brand Logo (Left Navbar):** Located at `logo.png` (Prometeon main logo). Scaled via CSS `.brand-logo-img` to `38px` height.
-* **Team Badge (Right Navbar):** Displayed as **PTG Smart Manufacturing Team** with the custom Prometeon "P" symbol mark icon (`p_logo.png`). Styled via CSS `.profile-logo-img` to `18px` square.
+* **Team Badge (Right Navbar):** Displayed as **PTG Smart Manufacturing Team** with the custom Prometeon "P" symbol mark icon (`p_logo.png?v=1.2`). Styled via CSS `.profile-logo-img` to `18px` square.
+* **Tab Favicon:** Displayed as the Prometeon "P" symbol mark icon (`p_logo.png?v=1.2`).
 * **Interactive Elements:** The settings gear `⚙️` is placed on the far right. Hovering over it triggers a modern spin micro-animation.
 
 ---
@@ -67,7 +68,7 @@ To support standard 1080p, 1360x720, and mobile screens, the app conforms to the
    - The `.steps-section`, `.gantt-card`, `.log-form-container`, `.log-archive-container`, and `.modal-card` use `min-width: 0` or `min-width: 0 !important`.
    - The table container `.table-responsive` displays as `block` with `width: 100%; overflow-x: auto`.
    - This keeps horizontal swiping isolated inside the table or Gantt cards, leaving the main viewport perfectly aligned.
-5. **Cache-Busting Versioning:** Whenever modifying CSS styles, increment the query parameter version in `index.html` (e.g. `<link rel="stylesheet" href="css/styles.css?v=1.7">`) to force browsers to reload the stylesheet instantly instead of serving a cached version.
+5. **Cache-Busting Versioning:** Whenever modifying CSS styles or assets, increment the query parameter version in `index.html` (e.g. `<link rel="stylesheet" href="css/styles.css?v=1.8">` or `href="p_logo.png?v=1.2"`) to force browsers to reload immediately instead of serving a cached version.
 
 ---
 
