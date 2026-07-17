@@ -10,6 +10,20 @@ const ROUTES = {
     DATABASE: 'database'
 };
 
+// Date display formatter: converts 'YYYY-MM-DD' to 'D MMM' (e.g. '7 Jul')
+function formatDateDisplay(dateStr) {
+    if (!dateStr) return '-';
+    const parts = dateStr.split('-');
+    if (parts.length !== 3) return dateStr;
+    const monthIndex = parseInt(parts[1], 10) - 1;
+    const day = parseInt(parts[2], 10);
+    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    if (monthIndex >= 0 && monthIndex < 12) {
+        return `${day} ${months[monthIndex]}`;
+    }
+    return dateStr;
+}
+
 // Start UI App
 window.addEventListener('load', async () => {
     await window.Store.initStore();
@@ -429,7 +443,7 @@ function renderProjectDetails(id) {
                         <div class="log-card">
                             <div class="log-card-header">
                                 <span class="log-engineer">🧑‍💻 ${log.engineer}</span>
-                                <span class="log-date">📅 ${log.date}</span>
+                                <span class="log-date">📅 ${formatDateDisplay(log.date)}</span>
                             </div>
                             <div class="log-card-body">
                                 <p class="log-planned"><strong>Planned:</strong> ${log.planned_today || '-'}</p>
@@ -778,7 +792,7 @@ function renderLogs() {
                                     : `<span class="font-semibold">${log.project_name}</span>`;
                                 return `
                                 <tr class="log-row" data-search="${log.project_name.toLowerCase()} ${log.engineer.toLowerCase()} ${(log.actually_done || '').toLowerCase()} ${(log.comments || '').toLowerCase()}">
-                                    <td class="text-center text-muted text-small">${log.date}</td>
+                                    <td class="text-center text-muted text-small">${formatDateDisplay(log.date)}</td>
                                     <td>${projLink}</td>
                                     <td>🧑‍💻 ${log.engineer}</td>
                                     <td class="text-small text-muted">${log.planned_today || '-'}</td>
@@ -1024,7 +1038,7 @@ function renderLogs() {
                             : `<span class="font-semibold">${log.project_name}</span>`;
                         return `
                         <tr class="log-row" data-search="${log.project_name.toLowerCase()} ${log.engineer.toLowerCase()} ${(log.actually_done || '').toLowerCase()} ${(log.comments || '').toLowerCase()}">
-                            <td class="text-center text-muted text-small">${log.date}</td>
+                            <td class="text-center text-muted text-small">${formatDateDisplay(log.date)}</td>
                             <td>${projLink}</td>
                             <td>🧑‍💻 ${log.engineer}</td>
                             <td class="text-small text-muted">${log.planned_today || '-'}</td>
