@@ -44,6 +44,10 @@ This is a **purely client-side SPA** with zero database server backends:
   This dropped API overhead to exactly **1 read request** and **2 write requests** (saving and verifying), bringing sync times down to **~150ms** (loads) and **~400ms** (saves).
 * **Logs Archive Partitioning:** To keep load times fast, only the latest 30 daily logs are stored in `database.json`. Older logs are merged into `database_archive.json` in the repository. The full history is loaded on-demand in the UI.
 
+### ✏️ Project Metadata Editing
+* **Inline Updates:** Users can edit project names, descriptions, priorities, assignees, and dates inline via a dedicated `#edit-project-modal` form.
+* **Dynamic Re-calculation:** Editing project parameters invokes `window.Store.updateProject()` which saves the updates, triggers recalculations (such as progress and stats), commits changes dynamically, and instantly re-renders active dashboard tables or timeline headers.
+
 ### 👥 Unauthenticated Guest Access (Auto-Detect)
 * If the app is opened on `github.io` by a user without a Personal Access Token (PAT) configured, it auto-detects hosting and makes an unauthenticated REST API call to fetch `database.json`.
 * This allows general team visitors to view real-time roadmap updates instantly on page reload. If the public rate limit (60 requests/hour per IP) is reached, it falls back to the static raw CDN URL.
