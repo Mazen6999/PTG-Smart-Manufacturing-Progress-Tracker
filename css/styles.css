@@ -275,6 +275,8 @@ a:hover {
     flex-direction: column;
     gap: 28px;
     width: 100%;
+    min-width: 0;
+    overflow-x: hidden;
 }
 
 /* ==========================================
@@ -1659,6 +1661,39 @@ a:hover {
     .form-row {
         grid-template-columns: 1fr !important;
         gap: 12px !important;
+    }
+
+    /* Page container responsiveness */
+    .content-viewport {
+        padding: 16px !important;
+        gap: 20px !important;
+    }
+
+    /* Grid layout stacking */
+    .details-workspace-grid,
+    .settings-grid,
+    .logs-layout-grid {
+        grid-template-columns: 1fr !important;
+        gap: 20px !important;
+    }
+
+    /* Spacing card adjustments */
+    .project-header-card {
+        padding: 16px 20px !important;
+        gap: 14px !important;
+    }
+
+    .header-metadata-grid {
+        grid-template-columns: 1fr 1fr !important;
+        gap: 12px !important;
+    }
+
+    .steps-section,
+    .gantt-card,
+    .sticky-notes-card,
+    .logs-history-container,
+    .settings-card {
+        padding: 16px !important;
     }
 }
 
