@@ -9,8 +9,8 @@
       "start_date": null,
       "due_date": null,
       "assigned_to": "Team",
-      "latest_update": "Scanning Test on mch 9",
-      "next_step": "Mch 1-2",
+      "latest_update": "Mch 3-4",
+      "next_step": "Mch 5, 7",
       "blocked_by": "BU Production",
       "notes": ""
     },
@@ -409,8 +409,8 @@
       "duration": 0,
       "start_date": "2026-07-13",
       "end_date": "2026-07-13",
-      "progress": 0,
-      "status": "Not started",
+      "progress": 100,
+      "status": "Completed",
       "dependencies": "s6",
       "section": "DEPLOY",
       "external_dep": "BU Production"
@@ -424,8 +424,8 @@
       "duration": 0,
       "start_date": "2026-07-14",
       "end_date": "2026-07-14",
-      "progress": 0,
-      "status": "Not started",
+      "progress": 100,
+      "status": "Completed",
       "dependencies": "s7",
       "section": "DEPLOY",
       "external_dep": "BU Production"
