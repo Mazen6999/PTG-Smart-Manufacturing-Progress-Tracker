@@ -50,6 +50,24 @@ function renderCurrentView() {
     }
 }
 
+function updateProjectStatsInDOM(projectId) {
+    const project = window.Store.getProject(projectId);
+    if (!project) return;
+
+    // Update Overall Progress Text
+    const progressText = document.getElementById('project-details-progress-text');
+    if (progressText) {
+        progressText.textContent = `${project.progress.toFixed(1)}%`;
+    }
+
+    // Update Status Badge
+    const statusBadge = document.getElementById('project-details-status-badge');
+    if (statusBadge) {
+        statusBadge.textContent = project.status;
+        statusBadge.className = `badge status-badge status-${project.status.replace(/ /g, '-').toLowerCase()}`;
+    }
+}
+
 async function triggerBackgroundSyncCheck() {
     if (isSyncingInBackground || isPushingActive) return;
 
@@ -424,7 +442,7 @@ function renderProjectDetails(id) {
                 <div class="title-and-status" style="width: 100%; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
                     <div style="display: flex; align-items: center; gap: 16px;">
                         <h2>${project.name}</h2>
-                        <span class="badge status-badge status-${project.status.replace(/ /g, '-').toLowerCase()}">
+                        <span id="project-details-status-badge" class="badge status-badge status-${project.status.replace(/ /g, '-').toLowerCase()}">
                             ${project.status}
                         </span>
                     </div>
@@ -436,7 +454,7 @@ function renderProjectDetails(id) {
             <div class="header-metadata-grid">
                 <div class="meta-item">
                     <span class="meta-label">Overall Progress</span>
-                    <span class="meta-value text-primary font-bold">${project.progress.toFixed(1)}%</span>
+                    <span id="project-details-progress-text" class="meta-value text-primary font-bold">${project.progress.toFixed(1)}%</span>
                 </div>
                 <div class="meta-item">
                     <span class="meta-label">Assigned To</span>
@@ -837,11 +855,26 @@ function renderProjectDetails(id) {
             // Re-style element select box dynamically
             e.target.className = `status-select status-select-step status-${newStatus.replace(/ /g, '-').toLowerCase()}`;
             
-            window.UI.showToast(`Step status updated to '${newStatus}'!`, 'success');
+            // Inline DOM updates: update progress dropdown in the same row!
+            if (updateFields.progress !== undefined) {
+                const row = document.getElementById(`step-row-${stepId}`);
+                if (row) {
+                    const progressSelect = row.querySelector('.status-select-progress');
+                    if (progressSelect) {
+                        progressSelect.value = String(updateFields.progress);
+                    }
+                }
+            }
             
-            setTimeout(() => {
-                renderProjectDetails(id);
-            }, 800);
+            // Inline DOM updates: update overall project progress stats!
+            updateProjectStatsInDOM(id);
+            
+            // Redraw Gantt chart inline!
+            const updatedSteps = window.Store.getSteps(id);
+            const project = window.Store.getProject(id);
+            window.Gantt.renderGanttChart(updatedSteps, 'gantt-chart-container', project.name);
+            
+            window.UI.showToast(`Step status updated to '${newStatus}'!`, 'success');
         });
     });
 
@@ -865,11 +898,28 @@ function renderProjectDetails(id) {
             }
             
             window.Store.updateStep(stepId, updateFields);
-            window.UI.showToast(`Step progress updated to ${newProgress}%!`, 'success');
             
-            setTimeout(() => {
-                renderProjectDetails(id);
-            }, 800);
+            // Inline DOM updates: update status dropdown in the same row!
+            if (updateFields.status !== undefined) {
+                const row = document.getElementById(`step-row-${stepId}`);
+                if (row) {
+                    const statusSelect = row.querySelector('.status-select-step');
+                    if (statusSelect) {
+                        statusSelect.value = updateFields.status;
+                        statusSelect.className = `status-select status-select-step status-${updateFields.status.replace(/ /g, '-').toLowerCase()}`;
+                    }
+                }
+            }
+            
+            // Inline DOM updates: update overall project progress stats!
+            updateProjectStatsInDOM(id);
+            
+            // Redraw Gantt chart inline!
+            const updatedSteps = window.Store.getSteps(id);
+            const project = window.Store.getProject(id);
+            window.Gantt.renderGanttChart(updatedSteps, 'gantt-chart-container', project.name);
+            
+            window.UI.showToast(`Step progress updated to ${newProgress}%!`, 'success');
         });
     });
 }
