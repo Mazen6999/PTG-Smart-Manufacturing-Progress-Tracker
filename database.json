@@ -220,7 +220,7 @@
       "due_date": null,
       "assigned_to": "Team",
       "latest_update": "Conversative Model - Live test",
-      "next_step": "Trial Test - New Text Format",
+      "next_step": "Review",
       "blocked_by": null,
       "notes": ""
     },
@@ -1573,7 +1573,7 @@
     {
       "id": 88,
       "project_id": 16,
-      "step_code": "s7",
+      "step_code": "s8",
       "name": "Trial Test - New Text Format",
       "assigned_to": "Team",
       "duration": 2,
@@ -1581,9 +1581,9 @@
       "end_date": "2026-07-22",
       "progress": 50,
       "status": "In progress",
-      "dependencies": null,
+      "dependencies": "",
       "section": "Prototype",
-      "external_dep": null
+      "external_dep": ""
     }
   ],
   "logs": [
