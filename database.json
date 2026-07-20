@@ -1566,9 +1566,9 @@
       "end_date": "2026-07-20",
       "progress": 25,
       "status": "In progress",
-      "dependencies": null,
-      "section": null,
-      "external_dep": null
+      "dependencies": "",
+      "section": "Prototype",
+      "external_dep": ""
     },
     {
       "id": 88,
