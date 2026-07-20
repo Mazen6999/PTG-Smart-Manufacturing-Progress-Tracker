@@ -1291,14 +1291,14 @@
       "step_code": "s1",
       "name": "Initial project planning",
       "assigned_to": "Team",
-      "duration": 0,
+      "duration": 7,
       "start_date": "2026-06-02",
       "end_date": "2026-06-09",
       "progress": 100,
-      "status": "In progress",
-      "dependencies": null,
+      "status": "Completed",
+      "dependencies": "",
       "section": "CURRENT",
-      "external_dep": null
+      "external_dep": ""
     },
     {
       "id": 67,
