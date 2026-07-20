@@ -242,51 +242,56 @@ async function initStore() {
     }
 }
 
+// Queue to serialize sequential background pushes and avoid concurrent branch write conflicts
+let syncPromiseChain = Promise.resolve();
+
 // Trigger background server file write sync or GitHub update sync
 async function triggerSync(commitMessage = null, force = false) {
     const gitHubConfig = getGitHubConfig();
     if (gitHubConfig.enabled && gitHubConfig.repo && gitHubConfig.token) {
-        try {
-            console.log("GitHub Sync is active. Syncing data to GitHub...");
-            window.dispatchEvent(new CustomEvent('github-sync-start'));
-            const newSha = await saveDatabaseToGitHub(gitHubConfig, commitMessage, force);
-            if (newSha) {
-                localStorage.setItem('sm_progress_loaded_sha', newSha);
-            }
-            console.log("Database successfully synced to GitHub.");
-            window.dispatchEvent(new CustomEvent('github-sync-success'));
-        } catch (e) {
-            console.error("Could not sync database to GitHub:", e);
-            if (e.message === "CONFLICT_DETECTED") {
-                window.dispatchEvent(new CustomEvent('github-sync-conflict'));
-                const doForce = confirm(
-                    "⚠️ CONFLICT DETECTED!\n\n" +
-                    "Another team member has updated the database since you loaded or refreshed the page.\n" +
-                    "Overwriting will erase their changes.\n\n" +
-                    "Do you want to FORCE overwrite the repository with your local changes?"
-                );
-                if (doForce) {
-                    try {
-                        console.log("Forcing sync to GitHub...");
-                        window.dispatchEvent(new CustomEvent('github-sync-start'));
-                        const forcedSha = await saveDatabaseToGitHub(gitHubConfig, commitMessage, true);
-                        if (forcedSha) {
-                            localStorage.setItem('sm_progress_loaded_sha', forcedSha);
+        syncPromiseChain = syncPromiseChain.then(async () => {
+            try {
+                console.log("GitHub Sync is active. Syncing data to GitHub...");
+                window.dispatchEvent(new CustomEvent('github-sync-start'));
+                const newSha = await saveDatabaseToGitHub(gitHubConfig, commitMessage, force);
+                if (newSha) {
+                    localStorage.setItem('sm_progress_loaded_sha', newSha);
+                }
+                console.log("Database successfully synced to GitHub.");
+                window.dispatchEvent(new CustomEvent('github-sync-success'));
+            } catch (e) {
+                console.error("Could not sync database to GitHub:", e);
+                if (e.message === "CONFLICT_DETECTED") {
+                    window.dispatchEvent(new CustomEvent('github-sync-conflict'));
+                    const doForce = confirm(
+                        "⚠️ CONFLICT DETECTED!\n\n" +
+                        "Another team member has updated the database since you loaded or refreshed the page.\n" +
+                        "Overwriting will erase their changes.\n\n" +
+                        "Do you want to FORCE overwrite the repository with your local changes?"
+                    );
+                    if (doForce) {
+                        try {
+                            console.log("Forcing sync to GitHub...");
+                            window.dispatchEvent(new CustomEvent('github-sync-start'));
+                            const forcedSha = await saveDatabaseToGitHub(gitHubConfig, commitMessage, true);
+                            if (forcedSha) {
+                                localStorage.setItem('sm_progress_loaded_sha', forcedSha);
+                            }
+                            console.log("Database successfully synced to GitHub (forced).");
+                            window.dispatchEvent(new CustomEvent('github-sync-success'));
+                        } catch (retryError) {
+                            console.error("Forced sync failed:", retryError);
+                            window.dispatchEvent(new CustomEvent('github-sync-error', { detail: retryError.message }));
                         }
-                        console.log("Database successfully synced to GitHub (forced).");
-                        window.dispatchEvent(new CustomEvent('github-sync-success'));
-                    } catch (retryError) {
-                        console.error("Forced sync failed:", retryError);
-                        window.dispatchEvent(new CustomEvent('github-sync-error', { detail: retryError.message }));
+                    } else {
+                        window.UI.showToast("Sync cancelled. Please reload the page to pull the latest changes.", "warning");
                     }
                 } else {
-                    window.UI.showToast("Sync cancelled. Please reload the page to pull the latest changes.", "warning");
+                    window.dispatchEvent(new CustomEvent('github-sync-error', { detail: e.message }));
                 }
-            } else {
-                window.dispatchEvent(new CustomEvent('github-sync-error', { detail: e.message }));
             }
-        }
-        return;
+        });
+        return syncPromiseChain;
     }
 
     try {
