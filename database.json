@@ -886,14 +886,14 @@
       "step_code": "s2",
       "name": "Requirements definition",
       "assigned_to": "Team",
-      "duration": 0,
+      "duration": 5,
       "start_date": "2026-07-21",
       "end_date": "2026-07-26",
       "progress": 0,
-      "status": "Not started",
+      "status": "Completed",
       "dependencies": "s1",
       "section": "FUTURE",
-      "external_dep": null
+      "external_dep": ""
     },
     {
       "id": 40,
