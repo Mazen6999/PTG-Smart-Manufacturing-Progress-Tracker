@@ -318,7 +318,7 @@
       "due_date": "2026-08-10",
       "assigned_to": "Team",
       "latest_update": null,
-      "next_step": "Dremio Shift Seg. Logic",
+      "next_step": "Business Requirements definition",
       "blocked_by": null,
       "notes": ""
     }
@@ -1602,7 +1602,7 @@
     {
       "id": 89,
       "project_id": 23,
-      "step_code": "s1",
+      "step_code": "s2",
       "name": "Dremio Shift Seg. Logic",
       "assigned_to": "Team",
       "duration": 3,
