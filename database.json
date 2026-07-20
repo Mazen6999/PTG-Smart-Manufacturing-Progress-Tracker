@@ -1340,7 +1340,7 @@
       "start_date": "2026-06-09",
       "end_date": "2026-06-16",
       "progress": 100,
-      "status": "Not started",
+      "status": "Completed",
       "dependencies": "s1",
       "section": "FUTURE",
       "external_dep": null
