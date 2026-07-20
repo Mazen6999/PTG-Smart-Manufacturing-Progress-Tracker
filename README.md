@@ -39,8 +39,8 @@ Each authorized engineer performs this one-time setup on their browser:
 ```
 sm-progress-tracker-github-web/
 ├── index.html              # Dynamic SPA shell: dashboard, timelines, modals
-├── projects.json           # Projects and schedule steps (updated by REST API)
-├── logs_*.json             # Per-engineer daily log files (segregated to prevent conflicts)
+├── database.json           # Active projects, steps, and recent daily logs
+├── database_archive.json   # Historic daily logs (loaded dynamically in the UI)
 ├── css/
 │   └── styles.css          # Design system: glassmorphism, responsive, dark elements
 ├── js/
@@ -97,11 +97,3 @@ git remote set-url origin https://github.com/Mazen-Shams/PTG-Smart-Manufacturing
 
 ### Step 5: Enabling GitHub Pages
 GitHub Pages was activated on the repository to deploy from the `/ (root)` folder of the `main` branch, making the Single Page Application instantly available on the web.
-
----
-
-## ⚙️ Offline & Local Fallback
-If you ever want to work offline or test modifications locally:
-1. Turn **GitHub Sync** to **OFF** in Settings.
-2. Launch the local PowerShell server by double-clicking `run_static_web.bat`.
-3. The app will automatically fall back to local disk persistence on port `8000`.

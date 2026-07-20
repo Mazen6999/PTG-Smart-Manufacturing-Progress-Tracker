@@ -19,7 +19,6 @@ This is a **purely client-side SPA** with zero database server backends:
 3. **Storage Sync:**
    - When **GitHub Sync** is enabled: The app reads and writes files directly to the GitHub repository using the GitHub REST API.
    - When **GitHub Sync** is disabled: The app falls back to **Local Storage** in the user's browser.
-4. **Local CLI Fallback:** A PowerShell server script (`server.ps1`) is provided to receive updates locally if the user chooses to run a local dev loop.
 
 ---
 
