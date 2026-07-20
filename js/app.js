@@ -188,6 +188,28 @@ function renderDashboard() {
     const mainViewport = document.getElementById('main-viewport');
     const projects = window.Store.getProjects();
 
+    const statusPriority = {
+        'In progress': 1,
+        'On Hold': 2,
+        'Not started': 3,
+        'Completed': 4
+    };
+
+    // Sort projects: In progress -> On Hold -> Not started -> Completed
+    projects.sort((a, b) => {
+        const valA = statusPriority[a.status] || 99;
+        const valB = statusPriority[b.status] || 99;
+        if (valA !== valB) {
+            return valA - valB;
+        }
+        const prioA = Number(a.priority) || 9999;
+        const prioB = Number(b.priority) || 9999;
+        if (prioA !== prioB) {
+            return prioA - prioB;
+        }
+        return a.name.localeCompare(b.name);
+    });
+
     const inProgressCount = projects.filter(p => p.status === 'In progress').length;
     const blockedCount = projects.filter(p => p.blocked_by && p.blocked_by.trim() !== '').length;
     const completedCount = projects.filter(p => p.status === 'Completed').length;
