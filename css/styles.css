@@ -825,11 +825,15 @@ a:hover {
 }
 
 .steps-table th {
-    padding: 12px 14px;
-    font-size: 10.5px;
+    padding: 12px 10px;
+    font-size: 10px;
 }
 .steps-table td {
-    padding: 12px 14px;
+    padding: 12px 10px;
+}
+.steps-table td.text-small {
+    white-space: nowrap;
+    font-size: 11px;
 }
 
 .logs-section {
