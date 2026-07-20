@@ -323,20 +323,6 @@
       "notes": ""
     },
     {
-      "id": 24,
-      "name": "test",
-      "description": "Created during synchronization testing.",
-      "status": "Not started",
-      "priority": 9999,
-      "start_date": null,
-      "due_date": null,
-      "assigned_to": "Team",
-      "latest_update": null,
-      "next_step": null,
-      "blocked_by": null,
-      "notes": ""
-    },
-    {
       "id": 25,
       "name": "test",
       "description": "",
@@ -1788,21 +1774,6 @@
       "progress": 75,
       "status": "On Hold",
       "dependencies": "s1",
-      "section": null,
-      "external_dep": null
-    },
-    {
-      "id": 100,
-      "project_id": 24,
-      "step_code": "s3",
-      "name": "test",
-      "assigned_to": null,
-      "duration": 1,
-      "start_date": null,
-      "end_date": null,
-      "progress": 0,
-      "status": "Not started",
-      "dependencies": null,
       "section": null,
       "external_dep": null
     },
