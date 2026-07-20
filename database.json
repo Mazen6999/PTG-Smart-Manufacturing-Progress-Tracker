@@ -219,7 +219,7 @@
       "start_date": null,
       "due_date": null,
       "assigned_to": "Team",
-      "latest_update": "Conversative Model - Live test",
+      "latest_update": "Review",
       "next_step": null,
       "blocked_by": null,
       "notes": ""
@@ -1553,6 +1553,21 @@
       "status": "Not started",
       "dependencies": "s1",
       "section": "FUTURE",
+      "external_dep": null
+    },
+    {
+      "id": 87,
+      "project_id": 16,
+      "step_code": "S7",
+      "name": "Review",
+      "assigned_to": "Team",
+      "duration": 4,
+      "start_date": "2026-07-16",
+      "end_date": "2026-07-20",
+      "progress": 100,
+      "status": "Completed",
+      "dependencies": null,
+      "section": null,
       "external_dep": null
     }
   ],
