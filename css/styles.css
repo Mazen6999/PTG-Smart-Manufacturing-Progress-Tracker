@@ -634,26 +634,7 @@ a:hover {
 .status-on-hold { background-color: #fee2e2; color: #991b1b; }
 .status-completed { background-color: #dcfce7; color: #166534; }
 
-/* Dropdown choices visual styling (browser options picker color matching) */
-.status-select option {
-    font-weight: 600;
-}
-.status-select option[value="Not started"] {
-    background-color: #f1f5f9;
-    color: #475569;
-}
-.status-select option[value="In progress"] {
-    background-color: #dbeafe;
-    color: #1e40af;
-}
-.status-select option[value="On Hold"] {
-    background-color: #fee2e2;
-    color: #991b1b;
-}
-.status-select option[value="Completed"] {
-    background-color: #dcfce7;
-    color: #166534;
-}
+
 
 /* Progress bar UI elements */
 .progress-container {
