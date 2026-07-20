@@ -9,8 +9,8 @@
       "start_date": null,
       "due_date": null,
       "assigned_to": "Team",
-      "latest_update": "Mch 3-4",
-      "next_step": "Mch 5, 7",
+      "latest_update": "Mch 5, 7",
+      "next_step": "Mch 8-9",
       "blocked_by": "BU Production",
       "notes": ""
     },
@@ -439,8 +439,8 @@
       "duration": 0,
       "start_date": "2026-07-15",
       "end_date": "2026-07-15",
-      "progress": 0,
-      "status": "Not started",
+      "progress": 100,
+      "status": "Completed",
       "dependencies": "s8",
       "section": "DEPLOY",
       "external_dep": "BU Production"
