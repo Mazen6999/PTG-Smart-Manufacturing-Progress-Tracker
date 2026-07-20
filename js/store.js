@@ -247,6 +247,11 @@ let syncPromiseChain = Promise.resolve();
 let syncDebounceTimeout = null;
 let pendingCommitMessage = null;
 
+// Check if a background sync is currently scheduled (debouncing)
+function isSyncPending() {
+    return syncDebounceTimeout !== null;
+}
+
 // Trigger background server file write sync or GitHub update sync
 async function triggerSync(commitMessage = null, force = false) {
     if (commitMessage) {
@@ -255,6 +260,7 @@ async function triggerSync(commitMessage = null, force = false) {
     
     if (syncDebounceTimeout) {
         clearTimeout(syncDebounceTimeout);
+        syncDebounceTimeout = null;
     }
     
     if (force) {
@@ -267,7 +273,9 @@ async function triggerSync(commitMessage = null, force = false) {
         syncDebounceTimeout = setTimeout(async () => {
             const msg = pendingCommitMessage || commitMessage || "Automated batch database update";
             pendingCommitMessage = null;
-            resolve(await runSync(msg, false));
+            const res = await runSync(msg, false);
+            syncDebounceTimeout = null;
+            resolve(res);
         }, 2000); // 2 seconds debounce interval
     });
 }
@@ -845,7 +853,8 @@ window.Store = {
     archiveOlderLogs,
     loadArchivedLogs,
     autoDetectGitHubRepo,
-    isEditingAllowed
+    isEditingAllowed,
+    isSyncPending
 };
 
 // --- MOCK SEED DATA ---

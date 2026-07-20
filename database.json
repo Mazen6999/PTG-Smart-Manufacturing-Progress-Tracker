@@ -321,6 +321,20 @@
       "next_step": "Business Requirements definition",
       "blocked_by": null,
       "notes": ""
+    },
+    {
+      "id": 24,
+      "name": "test",
+      "description": "Created during synchronization testing.",
+      "status": "Not started",
+      "priority": 9999.0,
+      "start_date": null,
+      "due_date": null,
+      "assigned_to": "Team",
+      "latest_update": null,
+      "next_step": null,
+      "blocked_by": null,
+      "notes": ""
     }
   ],
   "steps": [

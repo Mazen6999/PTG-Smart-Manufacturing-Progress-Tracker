@@ -69,7 +69,7 @@ function updateProjectStatsInDOM(projectId) {
 }
 
 async function triggerBackgroundSyncCheck() {
-    if (isSyncingInBackground || isPushingActive) return;
+    if (isSyncingInBackground || isPushingActive || window.Store.isSyncPending()) return;
 
     const config = window.Store.getGitHubConfig();
     const detected = window.Store.autoDetectGitHubRepo();
