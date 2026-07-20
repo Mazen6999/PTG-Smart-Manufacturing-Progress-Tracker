@@ -498,7 +498,7 @@ function renderProjectDetails(id) {
                                 <th style="width: 105px;" class="text-center">Start</th>
                                 <th style="width: 105px;" class="text-center">End</th>
                                 <th style="width: 75px;" class="text-center">Progress</th>
-                                <th style="width: 105px;">Status</th>
+                                <th style="width: 125px;">Status</th>
                                 <th style="width: 50px;" class="text-center">Dep.</th>
                                 <th style="width: 75px;">Section</th>
                                 <th style="width: 90px;">Ext. Dep</th>
