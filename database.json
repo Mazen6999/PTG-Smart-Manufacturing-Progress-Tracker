@@ -615,15 +615,15 @@
       "project_id": 2,
       "step_code": "s3",
       "name": "1st Review",
-      "assigned_to": "Nada",
-      "duration": 0,
+      "assigned_to": "Tea",
+      "duration": 1,
       "start_date": "2026-05-15",
       "end_date": "2026-05-15",
       "progress": 100,
       "status": "Completed",
       "dependencies": "s2",
       "section": "SETUP",
-      "external_dep": null
+      "external_dep": ""
     },
     {
       "id": 22,
