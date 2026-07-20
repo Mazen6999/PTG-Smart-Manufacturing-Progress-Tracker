@@ -939,7 +939,7 @@ function openStepModalForEdit(projectId, stepId) {
 
     // Populate inputs
     document.getElementById('step_code').value = step.step_code;
-    document.getElementById('step_code').setAttribute('readonly', 'true');
+    document.getElementById('step_code').removeAttribute('readonly');
     document.getElementById('step_name').value = step.name;
     document.getElementById('step_assigned_to').value = step.assigned_to || '';
     document.getElementById('step_progress').value = step.progress || 0;
