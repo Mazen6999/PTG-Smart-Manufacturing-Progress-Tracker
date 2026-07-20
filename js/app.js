@@ -864,7 +864,7 @@ function renderProjectDetails(id) {
                 updateFields.progress = 50;
             }
             
-            window.Store.updateStep(stepId, updateFields);
+            window.Store.updateStep(stepId, updateFields, true, false);
             
             // Re-style element select box dynamically
             e.target.className = `status-select status-select-step status-${newStatus.replace(/ /g, '-').toLowerCase()}`;
@@ -911,7 +911,7 @@ function renderProjectDetails(id) {
                 updateFields.status = 'In progress';
             }
             
-            window.Store.updateStep(stepId, updateFields);
+            window.Store.updateStep(stepId, updateFields, true, false);
             
             // Inline DOM updates: update status dropdown in the same row!
             if (updateFields.status !== undefined) {

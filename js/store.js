@@ -408,7 +408,7 @@ function addProject(project) {
         section: 'SETUP',
         dependencies: null,
         external_dep: null
-    });
+    }, false);
 
     addStep({
         project_id: newId,
@@ -423,10 +423,10 @@ function addProject(project) {
         section: 'SETUP',
         dependencies: 's1',
         external_dep: null
-    });
+    }, false);
 
     recalculateProjectStats(newId);
-    triggerSync(`Add project: "${newProject.name}"`);
+    triggerSync(`Add project: "${newProject.name}"`, true);
     return newProject;
 }
 
@@ -438,7 +438,7 @@ function updateProject(id, fields) {
         projects[index] = { ...projects[index], ...fields };
         setItems(STORAGE_KEYS.PROJECTS, projects);
         recalculateProjectStats(id);
-        triggerSync(`Update project: "${oldName}"`);
+        triggerSync(`Update project: "${oldName}"`, true);
         return projects[index];
     }
     return null;
@@ -466,7 +466,7 @@ function deleteProject(id) {
         return l;
     });
     setItems(STORAGE_KEYS.LOGS, logs);
-    triggerSync(`Delete project: "${projName}"`);
+    triggerSync(`Delete project: "${projName}"`, true);
 }
 
 // --- STEPS CRUD ---
@@ -491,7 +491,7 @@ function getSteps(projectId) {
     return steps.filter(s => s.project_id === pid).sort(compareStepCodes);
 }
 
-function addStep(step) {
+function addStep(step, sync = true, force = true) {
     const steps = getItems(STORAGE_KEYS.STEPS);
     const newId = steps.length > 0 ? Math.max(...steps.map(s => s.id)) + 1 : 1;
     
@@ -523,13 +523,15 @@ function addStep(step) {
     setItems(STORAGE_KEYS.STEPS, steps);
     recalculateProjectStats(step.project_id);
     
-    const proj = getProject(step.project_id);
-    const projName = proj ? proj.name : `ID ${step.project_id}`;
-    triggerSync(`Add schedule step "${newStep.step_code}" to project "${projName}"`);
+    if (sync) {
+        const proj = getProject(step.project_id);
+        const projName = proj ? proj.name : `ID ${step.project_id}`;
+        triggerSync(`Add schedule step "${newStep.step_code}" to project "${projName}"`, force);
+    }
     return newStep;
 }
 
-function updateStep(stepId, fields) {
+function updateStep(stepId, fields, sync = true, force = true) {
     const steps = getItems(STORAGE_KEYS.STEPS);
     const index = steps.findIndex(s => s.id === Number(stepId));
     if (index !== -1) {
@@ -551,13 +553,16 @@ function updateStep(stepId, fields) {
         };
         setItems(STORAGE_KEYS.STEPS, steps);
         recalculateProjectStats(steps[index].project_id);
-        triggerSync(`Update step "${stepCode}" in project "${projName}"`);
+        
+        if (sync) {
+            triggerSync(`Update step "${stepCode}" in project "${projName}"`, force);
+        }
         return steps[index];
     }
     return null;
 }
 
-function deleteStep(stepId) {
+function deleteStep(stepId, force = true) {
     const steps = getItems(STORAGE_KEYS.STEPS);
     const step = steps.find(s => s.id === Number(stepId));
     if (step) {
@@ -567,7 +572,7 @@ function deleteStep(stepId) {
         
         const proj = getProject(step.project_id);
         const projName = proj ? proj.name : `ID ${step.project_id}`;
-        triggerSync(`Delete step "${step.step_code}" from project "${projName}"`);
+        triggerSync(`Delete step "${step.step_code}" from project "${projName}"`, force);
     }
 }
 
@@ -611,7 +616,7 @@ function getLogs(projectId = null) {
     return logs.sort((a, b) => b.date.localeCompare(a.date) || b.id - a.id);
 }
 
-function addLog(log) {
+function addLog(log, force = true) {
     const logs = getItems(STORAGE_KEYS.LOGS);
     const newId = logs.length > 0 ? Math.max(...logs.map(l => l.id)) + 1 : 1;
     
@@ -641,18 +646,18 @@ function addLog(log) {
 
     logs.push(newLog);
     setItems(STORAGE_KEYS.LOGS, logs);
-    triggerSync(`Add daily log by ${newLog.engineer} for project "${projectName}"`);
+    triggerSync(`Add daily log by ${newLog.engineer} for project "${projectName}"`, force);
     return newLog;
 }
 
-function deleteLog(logId) {
+function deleteLog(logId, force = true) {
     const logs = getItems(STORAGE_KEYS.LOGS);
     const log = logs.find(l => l.id === Number(logId));
     const logDetails = log ? `by ${log.engineer} on ${log.date}` : `ID ${logId}`;
     
     const filteredLogs = logs.filter(l => l.id !== Number(logId));
     setItems(STORAGE_KEYS.LOGS, filteredLogs);
-    triggerSync(`Delete daily log entry ${logDetails}`);
+    triggerSync(`Delete daily log entry ${logDetails}`, force);
 }
 
 // --- BACKUP & EXPORT/IMPORT ---
@@ -681,7 +686,7 @@ function importJSON(jsonString) {
         // Recalculate stats for all projects
         const projects = getItems(STORAGE_KEYS.PROJECTS);
         projects.forEach(p => recalculateProjectStats(p.id));
-        triggerSync("Import full database backup from JSON file");
+        triggerSync("Import full database backup from JSON file", true);
         return true;
     } catch (e) {
         console.error("Failed to import JSON", e);
