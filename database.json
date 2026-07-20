@@ -1261,14 +1261,14 @@
       "step_code": "s1",
       "name": "yes",
       "assigned_to": "Nada",
-      "duration": 0,
+      "duration": 5,
       "start_date": "2026-07-08",
       "end_date": "2026-07-13",
       "progress": 50,
-      "status": "In progress",
-      "dependencies": null,
+      "status": "Completed",
+      "dependencies": "",
       "section": "CURRENT",
-      "external_dep": null
+      "external_dep": ""
     },
     {
       "id": 65,
