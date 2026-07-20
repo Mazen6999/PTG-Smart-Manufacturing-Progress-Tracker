@@ -23,8 +23,8 @@
       "start_date": null,
       "due_date": null,
       "assigned_to": "Team",
-      "latest_update": "Calibration",
-      "next_step": "3rd Review",
+      "latest_update": "2nd Review",
+      "next_step": "Calibration",
       "blocked_by": null,
       "notes": ""
     },
@@ -313,13 +313,13 @@
       "name": "Daily Mix Digitalization Dashboard",
       "description": "Replacing the Excel-based Daily Mix Monitor workbook with an automated Grafana dashboard mapped to Dremio, segmented by 3 SAP shifts.",
       "status": "In progress",
-      "priority": 9999,
+      "priority": 23,
       "start_date": "2026-07-20",
       "due_date": "2026-08-10",
       "assigned_to": "Team",
-      "latest_update": null,
-      "next_step": "Dremio Shift Seg. Logic",
-      "blocked_by": null,
+      "latest_update": "Dremio cluster coordinator is down; cannot access Dremio or work on Grafana.",
+      "next_step": "Restore Dremio cluster and implement shift segmentation SQL logic",
+      "blocked_by": "Dremio Cluster",
       "notes": ""
     }
   ],
@@ -599,15 +599,15 @@
       "project_id": 2,
       "step_code": "s1",
       "name": "Assessment & Proposal",
-      "assigned_to": "Team",
-      "duration": 0,
+      "assigned_to": "Nada",
+      "duration": 14,
       "start_date": "2026-04-01",
       "end_date": "2026-04-15",
       "progress": 100,
       "status": "Completed",
-      "dependencies": null,
+      "dependencies": "",
       "section": "SETUP",
-      "external_dep": null
+      "external_dep": ""
     },
     {
       "id": 20,
