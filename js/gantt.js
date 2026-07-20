@@ -72,7 +72,19 @@ function renderGanttChart(steps, containerId, title = "Project Schedule Timeline
     // Dimensions
     const width = 1350;
     const rowHeight = 45;
-    const leftAxisWidth = 150;
+    // Calculate required left axis width dynamically based on longest label to prevent cropping
+    let maxLabelLength = 0;
+    parsedSteps.forEach(ps => {
+        const cleanAssigned = (ps.assigned || 'Team').trim();
+        const cleanExtDep = (ps.external_dep || '').trim();
+        const hasOverlap = cleanExtDep && cleanAssigned.toLowerCase().includes(cleanExtDep.toLowerCase());
+        const extDepText = (cleanExtDep && !hasOverlap) ? ` / ${cleanExtDep}` : '';
+        const labelText = `${ps.id} (${cleanAssigned}${extDepText})`;
+        if (labelText.length > maxLabelLength) {
+            maxLabelLength = labelText.length;
+        }
+    });
+    const leftAxisWidth = Math.max(120, Math.min(280, Math.ceil(maxLabelLength * 6.8 + 25)));
     const rightMargin = 40;
     const topPadding = 60;
     const bottomPadding = 60;
