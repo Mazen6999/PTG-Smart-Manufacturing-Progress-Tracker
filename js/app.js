@@ -516,9 +516,12 @@ function renderProjectDetails(id) {
                                 <td class="text-center text-small">${step.end_date || '-'}</td>
                                 <td class="text-center font-bold">${step.progress}%</td>
                                 <td>
-                                    <span class="badge badge-sm status-${step.status.replace(/ /g, '-').toLowerCase()}">
-                                        ${step.status}
-                                    </span>
+                                    <select class="status-select status-select-step status-${(step.status || '').replace(/ /g, '-').toLowerCase()}" data-id="${step.id}">
+                                        <option value="Not started" ${(step.status || '').toLowerCase().trim() === 'not started' ? 'selected' : ''}>Not started</option>
+                                        <option value="In progress" ${(step.status || '').toLowerCase().trim() === 'in progress' ? 'selected' : ''}>In progress</option>
+                                        <option value="On Hold" ${(step.status || '').toLowerCase().trim() === 'on hold' ? 'selected' : ''}>On Hold</option>
+                                        <option value="Completed" ${(step.status || '').toLowerCase().trim() === 'completed' ? 'selected' : ''}>Completed</option>
+                                    </select>
                                 </td>
                                 <td class="text-center text-muted">${step.dependencies || '-'}</td>
                                 <td><span class="badge-section">${step.section || '-'}</span></td>
@@ -798,6 +801,34 @@ function renderProjectDetails(id) {
         btn.addEventListener('click', (e) => {
             const stepId = e.target.getAttribute('data-id');
             openStepModalForEdit(id, stepId);
+        });
+    });
+
+    // Step status quick changes
+    document.querySelectorAll('.status-select-step').forEach(select => {
+        select.addEventListener('change', (e) => {
+            const stepId = e.target.getAttribute('data-id');
+            const newStatus = e.target.value;
+            
+            // Automatically update progress if status becomes Completed or Not started
+            const updateFields = { status: newStatus };
+            if (newStatus === 'Completed') {
+                updateFields.progress = 100;
+            } else if (newStatus === 'Not started') {
+                updateFields.progress = 0;
+            }
+            
+            window.Store.updateStep(stepId, updateFields);
+            
+            // Re-style element select box dynamically
+            e.target.className = `status-select status-select-step status-${newStatus.replace(/ /g, '-').toLowerCase()}`;
+            
+            window.UI.showToast(`Step status updated to '${newStatus}'!`, 'success');
+            
+            // Re-render project details (after short delay so user sees dropdown click animation)
+            setTimeout(() => {
+                renderProjectDetails(id);
+            }, 800);
         });
     });
 }
