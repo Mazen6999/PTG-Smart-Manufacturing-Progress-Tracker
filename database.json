@@ -219,8 +219,8 @@
       "start_date": null,
       "due_date": null,
       "assigned_to": "Team",
-      "latest_update": "Initial project planning",
-      "next_step": "Business Requirements definition",
+      "latest_update": "Conversative Model - Live test",
+      "next_step": null,
       "blocked_by": null,
       "notes": ""
     },
@@ -1306,14 +1306,14 @@
       "step_code": "s2",
       "name": "Business Requirements definition",
       "assigned_to": "Team",
-      "duration": 0,
+      "duration": 7,
       "start_date": "2026-06-09",
       "end_date": "2026-06-16",
       "progress": 100,
-      "status": "Not started",
+      "status": "Completed",
       "dependencies": "s1",
       "section": "FUTURE",
-      "external_dep": null
+      "external_dep": ""
     },
     {
       "id": 68,
