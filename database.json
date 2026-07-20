@@ -1763,6 +1763,21 @@
       "dependencies": "s1",
       "section": null,
       "external_dep": null
+    },
+    {
+      "id": 100,
+      "project_id": 24,
+      "step_code": "s3",
+      "name": "test",
+      "assigned_to": null,
+      "duration": 1,
+      "start_date": null,
+      "end_date": null,
+      "progress": 0,
+      "status": "Not started",
+      "dependencies": null,
+      "section": null,
+      "external_dep": null
     }
   ],
   "logs": [
