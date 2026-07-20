@@ -497,7 +497,7 @@ function renderProjectDetails(id) {
                                 <th style="width: 60px;" class="text-center">Days</th>
                                 <th style="width: 105px;" class="text-center">Start</th>
                                 <th style="width: 105px;" class="text-center">End</th>
-                                <th style="width: 75px;" class="text-center">Progress</th>
+                                <th style="width: 95px;" class="text-center">Progress</th>
                                 <th style="width: 125px;">Status</th>
                                 <th style="width: 50px;" class="text-center">Dep.</th>
                                 <th style="width: 75px;">Section</th>
@@ -514,7 +514,15 @@ function renderProjectDetails(id) {
                                 <td class="text-center">${step.duration}</td>
                                 <td class="text-center text-small">${step.start_date || '-'}</td>
                                 <td class="text-center text-small">${step.end_date || '-'}</td>
-                                <td class="text-center font-bold">${step.progress}%</td>
+                                <td class="text-center">
+                                    <select class="progress-select status-select-progress font-bold" data-id="${step.id}">
+                                        <option value="0" ${Number(step.progress) === 0 ? 'selected' : ''}>0%</option>
+                                        <option value="25" ${Number(step.progress) === 25 ? 'selected' : ''}>25%</option>
+                                        <option value="50" ${Number(step.progress) === 50 ? 'selected' : ''}>50%</option>
+                                        <option value="75" ${Number(step.progress) === 75 ? 'selected' : ''}>75%</option>
+                                        <option value="100" ${Number(step.progress) === 100 ? 'selected' : ''}>100%</option>
+                                    </select>
+                                </td>
                                 <td>
                                     <select class="status-select status-select-step status-${(step.status || '').replace(/ /g, '-').toLowerCase()}" data-id="${step.id}">
                                         <option value="Not started" ${(step.status || '').toLowerCase().trim() === 'not started' ? 'selected' : ''}>Not started</option>
@@ -810,12 +818,17 @@ function renderProjectDetails(id) {
             const stepId = e.target.getAttribute('data-id');
             const newStatus = e.target.value;
             
-            // Automatically update progress if status becomes Completed or Not started
+            const steps = window.Store.getSteps(id);
+            const currentStep = steps.find(s => s.id === Number(stepId));
+            const currentProgress = currentStep ? Number(currentStep.progress) : 0;
+            
             const updateFields = { status: newStatus };
             if (newStatus === 'Completed') {
                 updateFields.progress = 100;
             } else if (newStatus === 'Not started') {
                 updateFields.progress = 0;
+            } else if (currentProgress === 100 || currentProgress === 0) {
+                updateFields.progress = 50;
             }
             
             window.Store.updateStep(stepId, updateFields);
@@ -825,7 +838,34 @@ function renderProjectDetails(id) {
             
             window.UI.showToast(`Step status updated to '${newStatus}'!`, 'success');
             
-            // Re-render project details (after short delay so user sees dropdown click animation)
+            setTimeout(() => {
+                renderProjectDetails(id);
+            }, 800);
+        });
+    });
+
+    // Step progress quick changes
+    document.querySelectorAll('.status-select-progress').forEach(select => {
+        select.addEventListener('change', (e) => {
+            const stepId = e.target.getAttribute('data-id');
+            const newProgress = Number(e.target.value);
+            
+            const steps = window.Store.getSteps(id);
+            const currentStep = steps.find(s => s.id === Number(stepId));
+            const currentStatus = (currentStep ? currentStep.status : '').toLowerCase().trim();
+            
+            const updateFields = { progress: newProgress };
+            if (newProgress === 100) {
+                updateFields.status = 'Completed';
+            } else if (newProgress === 0) {
+                updateFields.status = 'Not started';
+            } else if (currentStatus === 'completed' || currentStatus === 'not started') {
+                updateFields.status = 'In progress';
+            }
+            
+            window.Store.updateStep(stepId, updateFields);
+            window.UI.showToast(`Step progress updated to ${newProgress}%!`, 'success');
+            
             setTimeout(() => {
                 renderProjectDetails(id);
             }, 800);
@@ -1494,6 +1534,38 @@ function renderDatabaseView() {
 
 // --- GLOBAL DIALOG MODAL SUBMISSIONS ---
 function setupGlobalEventListeners() {
+    // Two-way synchronization in the step modal form between progress and status select elements
+    const stepProgressSelect = document.getElementById('step_progress');
+    const stepStatusSelect = document.getElementById('step_status');
+    if (stepProgressSelect && stepStatusSelect) {
+        stepStatusSelect.addEventListener('change', (e) => {
+            const statusVal = e.target.value;
+            if (statusVal === 'Completed') {
+                stepProgressSelect.value = '100';
+            } else if (statusVal === 'Not started') {
+                stepProgressSelect.value = '0';
+            } else {
+                if (stepProgressSelect.value === '100' || stepProgressSelect.value === '0') {
+                    stepProgressSelect.value = '50';
+                }
+            }
+        });
+
+        stepProgressSelect.addEventListener('change', (e) => {
+            const progressVal = Number(e.target.value);
+            const statusVal = stepStatusSelect.value.toLowerCase().trim();
+            if (progressVal === 100) {
+                stepStatusSelect.value = 'Completed';
+            } else if (progressVal === 0) {
+                stepStatusSelect.value = 'Not started';
+            } else {
+                if (statusVal === 'completed' || statusVal === 'not started') {
+                    stepStatusSelect.value = 'In progress';
+                }
+            }
+        });
+    }
+
     // 1. Submit New Project
     const projForm = document.getElementById('new-project-form');
     if (projForm) {

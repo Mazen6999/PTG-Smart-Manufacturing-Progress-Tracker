@@ -611,6 +611,24 @@ a:hover {
     width: 100%;
 }
 
+.progress-select {
+    padding: 5px 24px 5px 8px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 700;
+    border: 1px solid var(--border-color);
+    outline: none;
+    cursor: pointer;
+    background-color: #ffffff;
+    color: var(--text-main);
+    width: 100%;
+}
+.progress-select option {
+    font-weight: 700;
+    background-color: #ffffff;
+    color: var(--text-main);
+}
+
 .status-not-started { background-color: #f1f5f9; color: #475569; }
 .status-in-progress { background-color: #dbeafe; color: #1e40af; }
 .status-on-hold { background-color: #fee2e2; color: #991b1b; }
