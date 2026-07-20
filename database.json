@@ -65,8 +65,8 @@
       "start_date": null,
       "due_date": null,
       "assigned_to": "Team",
-      "latest_update": null,
-      "next_step": "Initial project planning",
+      "latest_update": "Panel and Query Addition",
+      "next_step": null,
       "blocked_by": null,
       "notes": ""
     },
@@ -914,16 +914,16 @@
       "id": 41,
       "project_id": 5,
       "step_code": "s1",
-      "name": "Initial project planning",
+      "name": "Panel and Query Addition",
       "assigned_to": "Team",
-      "duration": 0,
+      "duration": 5,
       "start_date": "2026-07-16",
       "end_date": "2026-07-21",
-      "progress": 50,
-      "status": "In progress",
-      "dependencies": null,
+      "progress": 100,
+      "status": "Completed",
+      "dependencies": "",
       "section": "CURRENT",
-      "external_dep": null
+      "external_dep": ""
     },
     {
       "id": 43,
