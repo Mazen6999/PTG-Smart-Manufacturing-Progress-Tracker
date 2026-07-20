@@ -690,14 +690,14 @@
       "step_code": "s7",
       "name": "2nd Review",
       "assigned_to": "Nada",
-      "duration": 0,
+      "duration": 4,
       "start_date": "2026-07-09",
-      "end_date": "2026-07-09",
+      "end_date": "2026-07-13",
       "progress": 100,
       "status": "Completed",
       "dependencies": "s6",
       "section": "AI BUILD",
-      "external_dep": null
+      "external_dep": ""
     },
     {
       "id": 26,
