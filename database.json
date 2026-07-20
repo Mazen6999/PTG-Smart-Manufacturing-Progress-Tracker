@@ -1715,9 +1715,9 @@
       "end_date": "2026-07-20",
       "progress": 75,
       "status": "In progress",
-      "dependencies": null,
-      "section": null,
-      "external_dep": null
+      "dependencies": "",
+      "section": "Business",
+      "external_dep": ""
     }
   ],
   "logs": [
