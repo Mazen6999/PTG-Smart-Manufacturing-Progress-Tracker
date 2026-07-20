@@ -177,8 +177,8 @@
       "start_date": null,
       "due_date": null,
       "assigned_to": "Team",
-      "latest_update": null,
-      "next_step": "Initial project planning",
+      "latest_update": "Gave a PC to Ahmed Elsayed",
+      "next_step": null,
       "blocked_by": null,
       "notes": ""
     },
@@ -1229,16 +1229,16 @@
       "id": 63,
       "project_id": 13,
       "step_code": "s1",
-      "name": "Initial project planning",
+      "name": "Gave a PC to Ahmed Elsayed",
       "assigned_to": "Team",
-      "duration": 0,
+      "duration": 5,
       "start_date": "2026-07-16",
       "end_date": "2026-07-21",
-      "progress": 50,
-      "status": "In progress",
-      "dependencies": null,
+      "progress": 100,
+      "status": "Completed",
+      "dependencies": "",
       "section": "CURRENT",
-      "external_dep": null
+      "external_dep": ""
     },
     {
       "id": 65,
