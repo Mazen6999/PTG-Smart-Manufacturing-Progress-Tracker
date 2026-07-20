@@ -1733,6 +1733,21 @@
       "dependencies": "s3",
       "section": "Query Dev",
       "external_dep": ""
+    },
+    {
+      "id": 98,
+      "project_id": 23,
+      "step_code": "s4",
+      "name": "Implement scrap Query",
+      "assigned_to": null,
+      "duration": 1,
+      "start_date": "2026-07-22",
+      "end_date": "2026-07-23",
+      "progress": 0,
+      "status": "Not started",
+      "dependencies": null,
+      "section": "Query.Dev",
+      "external_dep": null
     }
   ],
   "logs": [
