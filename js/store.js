@@ -242,11 +242,38 @@ async function initStore() {
     }
 }
 
-// Queue to serialize sequential background pushes and avoid concurrent branch write conflicts
+// Queue and Debounce to serialize sequential background pushes and avoid concurrent conflicts/spam
 let syncPromiseChain = Promise.resolve();
+let syncDebounceTimeout = null;
+let pendingCommitMessage = null;
 
 // Trigger background server file write sync or GitHub update sync
 async function triggerSync(commitMessage = null, force = false) {
+    if (commitMessage) {
+        pendingCommitMessage = commitMessage;
+    }
+    
+    if (syncDebounceTimeout) {
+        clearTimeout(syncDebounceTimeout);
+    }
+    
+    if (force) {
+        const msg = pendingCommitMessage || commitMessage || "Manual database sync update";
+        pendingCommitMessage = null;
+        return runSync(msg, true);
+    }
+    
+    return new Promise((resolve) => {
+        syncDebounceTimeout = setTimeout(async () => {
+            const msg = pendingCommitMessage || commitMessage || "Automated batch database update";
+            pendingCommitMessage = null;
+            resolve(await runSync(msg, false));
+        }, 2000); // 2 seconds debounce interval
+    });
+}
+
+// Perform the actual network write operations sequentially
+async function runSync(commitMessage, force) {
     const gitHubConfig = getGitHubConfig();
     if (gitHubConfig.enabled && gitHubConfig.repo && gitHubConfig.token) {
         syncPromiseChain = syncPromiseChain.then(async () => {
