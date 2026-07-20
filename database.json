@@ -1748,6 +1748,21 @@
       "dependencies": null,
       "section": "Query.Dev",
       "external_dep": null
+    },
+    {
+      "id": 99,
+      "project_id": 23,
+      "step_code": "s2",
+      "name": "Dremio Down",
+      "assigned_to": null,
+      "duration": 1,
+      "start_date": "2026-07-20",
+      "end_date": "2026-07-20",
+      "progress": 0,
+      "status": "Not started",
+      "dependencies": "s1",
+      "section": null,
+      "external_dep": null
     }
   ],
   "logs": [
