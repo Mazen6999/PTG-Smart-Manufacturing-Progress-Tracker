@@ -734,15 +734,15 @@
       "project_id": 2,
       "step_code": "s10",
       "name": "App Dev & Optimization",
-      "assigned_to": "Mazen",
-      "duration": 0,
+      "assigned_to": "Nada",
+      "duration": 26,
       "start_date": "2026-07-27",
       "end_date": "2026-08-22",
       "progress": 0,
       "status": "Not started",
       "dependencies": "s9",
       "section": "DEPLOY",
-      "external_dep": null
+      "external_dep": ""
     },
     {
       "id": 29,
