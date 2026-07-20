@@ -1731,7 +1731,7 @@
       "progress": 0,
       "status": "Not started",
       "dependencies": "s3",
-      "section": "Query.Dev",
+      "section": "Query Dev",
       "external_dep": ""
     }
   ],
