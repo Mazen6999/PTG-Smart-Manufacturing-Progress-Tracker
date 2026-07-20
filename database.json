@@ -220,7 +220,7 @@
       "due_date": null,
       "assigned_to": "Team",
       "latest_update": "Review",
-      "next_step": null,
+      "next_step": "Trial Test - New Text Format",
       "blocked_by": null,
       "notes": ""
     },
@@ -1568,6 +1568,21 @@
       "status": "Completed",
       "dependencies": null,
       "section": null,
+      "external_dep": null
+    },
+    {
+      "id": 88,
+      "project_id": 16,
+      "step_code": "s7",
+      "name": "Trial Test - New Text Format",
+      "assigned_to": "Team",
+      "duration": 2,
+      "start_date": "2026-07-20",
+      "end_date": "2026-07-22",
+      "progress": 50,
+      "status": "In progress",
+      "dependencies": null,
+      "section": "Prototype",
       "external_dep": null
     }
   ],
