@@ -805,7 +805,8 @@ window.Store = {
     getGitHubConfig,
     saveGitHubConfig,
     archiveOlderLogs,
-    loadArchivedLogs
+    loadArchivedLogs,
+    autoDetectGitHubRepo
 };
 
 // --- MOCK SEED DATA ---

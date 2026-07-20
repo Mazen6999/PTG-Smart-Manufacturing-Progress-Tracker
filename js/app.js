@@ -24,15 +24,98 @@ function formatDateDisplay(dateStr) {
     return dateStr;
 }
 
+// Background Sync State & Utilities
+let isSyncingInBackground = false;
+
+function updateSyncButtonState(active) {
+    const btn = document.getElementById('manual-sync-btn');
+    if (btn) {
+        if (active) {
+            btn.classList.add('syncing');
+            btn.title = "Syncing database from GitHub...";
+        } else {
+            btn.classList.remove('syncing');
+            btn.title = "Sync database from GitHub";
+        }
+    }
+}
+
+function renderCurrentView() {
+    if (currentRoute === ROUTES.DASHBOARD) {
+        renderDashboard();
+    } else if (currentRoute === ROUTES.PROJECT_DETAILS && currentProjectId !== null) {
+        renderProjectDetails(currentProjectId);
+    } else if (currentRoute === ROUTES.LOGS) {
+        renderLogs();
+    } else if (currentRoute === ROUTES.DATABASE) {
+        renderDatabaseView();
+    }
+}
+
+async function triggerBackgroundSyncCheck() {
+    if (isSyncingInBackground) return;
+
+    const config = window.Store.getGitHubConfig();
+    const detected = window.Store.autoDetectGitHubRepo();
+    if (!config.enabled && !detected) return; // Sync not active/configured
+
+    // Avoid overwriting active modal fields if the user is typing/editing
+    if (document.querySelector('.modal-overlay.active')) return;
+
+    isSyncingInBackground = true;
+    updateSyncButtonState(true);
+
+    try {
+        const oldSha = localStorage.getItem('sm_progress_loaded_sha');
+        await window.Store.initStore();
+        const newSha = localStorage.getItem('sm_progress_loaded_sha');
+
+        if (oldSha !== newSha && !document.querySelector('.modal-overlay.active')) {
+            renderCurrentView();
+            window.UI.showToast("Database auto-updated from GitHub", "info");
+        }
+    } catch (e) {
+        console.error("Background sync check failed:", e);
+    } finally {
+        isSyncingInBackground = false;
+        updateSyncButtonState(false);
+    }
+}
+
 // Start UI App
 window.addEventListener('load', async () => {
     await window.Store.initStore();
     window.UI.setupModalDismissers();
     setupGlobalEventListeners();
     navigate();
+
+    // Wire up the manual sync button (Option 3)
+    const manualSyncBtn = document.getElementById('manual-sync-btn');
+    if (manualSyncBtn) {
+        manualSyncBtn.addEventListener('click', async () => {
+            if (isSyncingInBackground) return;
+            isSyncingInBackground = true;
+            updateSyncButtonState(true);
+            try {
+                await window.Store.initStore();
+                renderCurrentView();
+                window.UI.showToast("Database refreshed from GitHub", "success");
+            } catch (e) {
+                console.error("Manual sync failed:", e);
+                window.UI.showToast("Sync failed: " + e.message, "danger");
+            } finally {
+                isSyncingInBackground = false;
+                updateSyncButtonState(false);
+            }
+        });
+    }
 });
 
-window.addEventListener('hashchange', navigate);
+// On page navigation, render instantly then background-sync (Option 1)
+window.addEventListener('hashchange', () => {
+    navigate();
+    triggerBackgroundSyncCheck();
+});
 
 // --- APP ROUTER ---
 function navigate() {
