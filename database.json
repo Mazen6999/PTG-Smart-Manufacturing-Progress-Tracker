@@ -1758,8 +1758,8 @@
       "duration": 1,
       "start_date": "2026-07-20",
       "end_date": "2026-07-20",
-      "progress": 0,
-      "status": "Not started",
+      "progress": 75,
+      "status": "On Hold",
       "dependencies": "s1",
       "section": null,
       "external_dep": null
