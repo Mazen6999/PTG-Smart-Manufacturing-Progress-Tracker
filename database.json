@@ -659,15 +659,15 @@
       "project_id": 2,
       "step_code": "s5",
       "name": "Seg Training",
-      "assigned_to": "Taric",
-      "duration": 0,
+      "assigned_to": "Nada",
+      "duration": 20,
       "start_date": "2026-06-04",
       "end_date": "2026-06-24",
       "progress": 100,
       "status": "Completed",
       "dependencies": "s4",
       "section": "AI BUILD",
-      "external_dep": "Production"
+      "external_dep": ""
     },
     {
       "id": 24,
