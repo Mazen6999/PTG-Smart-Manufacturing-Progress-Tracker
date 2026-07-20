@@ -1399,8 +1399,8 @@
       "duration": 0,
       "start_date": "2026-07-13",
       "end_date": "2026-07-16",
-      "progress": 0,
-      "status": "Not started",
+      "progress": 50,
+      "status": "In progress",
       "dependencies": null,
       "section": "SETUP",
       "external_dep": null
