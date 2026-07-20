@@ -1617,7 +1617,7 @@
     {
       "id": 90,
       "project_id": 23,
-      "step_code": "s4",
+      "step_code": "s3",
       "name": "Production Data Table check",
       "assigned_to": "Team",
       "duration": 2,
@@ -1625,7 +1625,7 @@
       "end_date": "2026-07-23",
       "progress": 0,
       "status": "Not started",
-      "dependencies": "s3",
+      "dependencies": "s2",
       "section": "Database",
       "external_dep": ""
     },
