@@ -317,9 +317,9 @@
       "start_date": "2026-07-20",
       "due_date": "2026-08-10",
       "assigned_to": "Team",
-      "latest_update": "Dremio cluster coordinator is down; cannot access Dremio or work on Grafana.",
-      "next_step": "Restore Dremio cluster and implement shift segmentation SQL logic",
-      "blocked_by": "Dremio Cluster",
+      "latest_update": null,
+      "next_step": "Dremio Shift Seg. Logic",
+      "blocked_by": null,
       "notes": ""
     }
   ],
@@ -1703,6 +1703,21 @@
       "dependencies": "s7",
       "section": "Training",
       "external_dep": ""
+    },
+    {
+      "id": 96,
+      "project_id": 23,
+      "step_code": "s1",
+      "name": "Business Requirements definition",
+      "assigned_to": "Team",
+      "duration": 5,
+      "start_date": "2026-07-15",
+      "end_date": "2026-07-20",
+      "progress": 75,
+      "status": "In progress",
+      "dependencies": null,
+      "section": null,
+      "external_dep": null
     }
   ],
   "logs": [
