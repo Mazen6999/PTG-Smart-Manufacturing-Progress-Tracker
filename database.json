@@ -65,7 +65,7 @@
       "start_date": null,
       "due_date": null,
       "assigned_to": "Team",
-      "latest_update": null,
+      "latest_update": "Requirements definition",
       "next_step": "Initial project planning",
       "blocked_by": null,
       "notes": ""
@@ -889,7 +889,7 @@
       "duration": 5,
       "start_date": "2026-07-21",
       "end_date": "2026-07-26",
-      "progress": 0,
+      "progress": 100,
       "status": "Completed",
       "dependencies": "s1",
       "section": "FUTURE",
