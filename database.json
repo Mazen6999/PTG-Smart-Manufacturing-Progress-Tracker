@@ -275,7 +275,7 @@
       "start_date": null,
       "due_date": null,
       "assigned_to": "Team",
-      "latest_update": "Not started",
+      "latest_update": null,
       "next_step": "Kickoff & Planning",
       "blocked_by": null,
       "notes": ""
@@ -1474,8 +1474,8 @@
       "duration": 0,
       "start_date": "2026-07-11",
       "end_date": "2026-07-13",
-      "progress": 100,
-      "status": "Completed",
+      "progress": 0,
+      "status": "Not started",
       "dependencies": null,
       "section": "SETUP",
       "external_dep": null
