@@ -220,7 +220,7 @@
       "due_date": null,
       "assigned_to": "Team",
       "latest_update": "Conversative Model - Live test",
-      "next_step": "Initial project planning",
+      "next_step": null,
       "blocked_by": null,
       "notes": ""
     },
@@ -1324,8 +1324,8 @@
       "duration": 0,
       "start_date": "2026-06-02",
       "end_date": "2026-06-09",
-      "progress": 50,
-      "status": "In progress",
+      "progress": 100,
+      "status": "Completed",
       "dependencies": null,
       "section": "CURRENT",
       "external_dep": null
