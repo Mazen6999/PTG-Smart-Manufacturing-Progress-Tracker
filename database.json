@@ -23,9 +23,9 @@
       "start_date": null,
       "due_date": null,
       "assigned_to": "Team",
-      "latest_update": "Calibration",
-      "next_step": "3rd Review",
-      "blocked_by": null,
+      "latest_update": "2nd Review",
+      "next_step": "Calibration",
+      "blocked_by": "Site Setup adjustment",
       "notes": ""
     },
     {
@@ -691,14 +691,14 @@
       "step_code": "s8",
       "name": "Calibration",
       "assigned_to": "Mazen",
-      "duration": 0,
+      "duration": 16,
       "start_date": "2026-07-10",
       "end_date": "2026-07-26",
       "progress": 0,
       "status": "Not started",
       "dependencies": "s7",
       "section": "DEPLOY",
-      "external_dep": null
+      "external_dep": "Site Setup adjustment"
     },
     {
       "id": 27,
