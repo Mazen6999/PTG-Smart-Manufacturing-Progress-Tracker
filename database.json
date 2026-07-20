@@ -1351,14 +1351,14 @@
       "step_code": "s5",
       "name": "Backend and Frontend Integration - Testing Other models",
       "assigned_to": "Team",
-      "duration": 0,
+      "duration": 13,
       "start_date": "2026-06-30",
       "end_date": "2026-07-13",
       "progress": 100,
-      "status": "Not started",
-      "dependencies": null,
+      "status": "Completed",
+      "dependencies": "",
       "section": "SETUP",
-      "external_dep": null
+      "external_dep": ""
     },
     {
       "id": 71,
