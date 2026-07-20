@@ -219,7 +219,7 @@
       "start_date": null,
       "due_date": null,
       "assigned_to": "Team",
-      "latest_update": "Review",
+      "latest_update": "Conversative Model - Live test",
       "next_step": "Trial Test - New Text Format",
       "blocked_by": null,
       "notes": ""
@@ -1564,8 +1564,8 @@
       "duration": 4,
       "start_date": "2026-07-16",
       "end_date": "2026-07-20",
-      "progress": 100,
-      "status": "Completed",
+      "progress": 25,
+      "status": "In progress",
       "dependencies": null,
       "section": null,
       "external_dep": null
