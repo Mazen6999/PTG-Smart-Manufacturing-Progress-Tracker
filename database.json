@@ -318,7 +318,7 @@
       "due_date": null,
       "assigned_to": "test",
       "latest_update": "Kickoff & Planning",
-      "next_step": "Requirements Definition",
+      "next_step": "test",
       "blocked_by": null
     }
   ],
@@ -1761,6 +1761,21 @@
       "status": "Not started",
       "dependencies": "s1",
       "section": "SETUP",
+      "external_dep": null
+    },
+    {
+      "id": 102,
+      "project_id": 24,
+      "step_code": "1",
+      "name": "test",
+      "assigned_to": null,
+      "duration": 1,
+      "start_date": null,
+      "end_date": null,
+      "progress": 0,
+      "status": "Not started",
+      "dependencies": null,
+      "section": null,
       "external_dep": null
     }
   ],
