@@ -615,7 +615,7 @@
       "project_id": 2,
       "step_code": "s3",
       "name": "1st Review",
-      "assigned_to": "Tea",
+      "assigned_to": "Team",
       "duration": 1,
       "start_date": "2026-05-15",
       "end_date": "2026-05-15",
