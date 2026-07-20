@@ -424,8 +424,8 @@
       "duration": 0,
       "start_date": "2026-07-14",
       "end_date": "2026-07-14",
-      "progress": 50,
-      "status": "In progress",
+      "progress": 0,
+      "status": "Not started",
       "dependencies": "s7",
       "section": "DEPLOY",
       "external_dep": "BU Production"
