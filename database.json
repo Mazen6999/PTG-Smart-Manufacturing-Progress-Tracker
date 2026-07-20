@@ -219,8 +219,8 @@
       "start_date": null,
       "due_date": null,
       "assigned_to": "Team",
-      "latest_update": "Conversative Model - Live test",
-      "next_step": null,
+      "latest_update": "Backend and Frontend Integration - Testing Other models",
+      "next_step": "Conversative Model - Live test",
       "blocked_by": null,
       "notes": ""
     },
@@ -1399,8 +1399,8 @@
       "duration": 0,
       "start_date": "2026-07-13",
       "end_date": "2026-07-16",
-      "progress": 100,
-      "status": "Completed",
+      "progress": 75,
+      "status": "In progress",
       "dependencies": null,
       "section": "SETUP",
       "external_dep": null
