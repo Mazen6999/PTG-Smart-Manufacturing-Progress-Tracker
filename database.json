@@ -35,7 +35,7 @@
       "status": "In progress",
       "priority": 3,
       "start_date": "2026-06-23",
-      "due_date": "2026-08-05",
+      "due_date": "",
       "assigned_to": "Team",
       "latest_update": "Consolidate YTD Master Dataset (January - June)",
       "next_step": "Power BI Refresh & FA Category Integration",
