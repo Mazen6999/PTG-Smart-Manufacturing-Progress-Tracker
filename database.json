@@ -313,13 +313,13 @@
       "name": "Daily Mix Digitalization Dashboard",
       "description": "Replacing the Excel-based Daily Mix Monitor workbook with an automated Grafana dashboard mapped to Dremio, segmented by 3 SAP shifts.",
       "status": "In progress",
-      "priority": 23,
+      "priority": 9999,
       "start_date": "2026-07-20",
       "due_date": "2026-08-10",
       "assigned_to": "Team",
-      "latest_update": "Dremio cluster coordinator is down; cannot access Dremio or work on Grafana.",
-      "next_step": "Restore Dremio cluster and implement shift segmentation SQL logic",
-      "blocked_by": "Dremio Cluster",
+      "latest_update": null,
+      "next_step": "Dremio Shift Seg. Logic",
+      "blocked_by": null,
       "notes": ""
     }
   ],
