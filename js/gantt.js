@@ -72,7 +72,7 @@ function renderGanttChart(steps, containerId, title = "Project Schedule Timeline
     // Dimensions
     const width = 1350;
     const rowHeight = 45;
-    const leftAxisWidth = 330;
+    const leftAxisWidth = 150;
     const rightMargin = 40;
     const topPadding = 60;
     const bottomPadding = 60;
