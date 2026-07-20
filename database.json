@@ -25,7 +25,7 @@
       "assigned_to": "Team",
       "latest_update": "2nd Review",
       "next_step": "Calibration",
-      "blocked_by": "Site Setup adjustment",
+      "blocked_by": null,
       "notes": ""
     },
     {
@@ -1568,7 +1568,7 @@
       "status": "In progress",
       "dependencies": "s7",
       "section": "Training",
-      "external_dep": "Site Setup adjustment"
+      "external_dep": ""
     }
   ],
   "logs": [
