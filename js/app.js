@@ -189,16 +189,16 @@ function renderDashboard() {
     const projects = window.Store.getProjects();
 
     const statusPriority = {
-        'In progress': 1,
-        'On Hold': 2,
-        'Not started': 3,
-        'Completed': 4
+        'in progress': 1,
+        'on hold': 2,
+        'not started': 3,
+        'completed': 4
     };
 
-    // Sort projects: In progress -> On Hold -> Not started -> Completed
+    // Sort projects: In progress -> On Hold -> Not started -> Completed (case-insensitive)
     projects.sort((a, b) => {
-        const valA = statusPriority[a.status] || 99;
-        const valB = statusPriority[b.status] || 99;
+        const valA = statusPriority[(a.status || '').toLowerCase().trim()] || 99;
+        const valB = statusPriority[(b.status || '').toLowerCase().trim()] || 99;
         if (valA !== valB) {
             return valA - valB;
         }
@@ -210,9 +210,9 @@ function renderDashboard() {
         return a.name.localeCompare(b.name);
     });
 
-    const inProgressCount = projects.filter(p => p.status === 'In progress').length;
+    const inProgressCount = projects.filter(p => (p.status || '').toLowerCase().trim() === 'in progress').length;
     const blockedCount = projects.filter(p => p.blocked_by && p.blocked_by.trim() !== '').length;
-    const completedCount = projects.filter(p => p.status === 'Completed').length;
+    const completedCount = projects.filter(p => (p.status || '').toLowerCase().trim() === 'completed').length;
 
     mainViewport.innerHTML = `
         <div class="metrics-grid">
