@@ -673,7 +673,7 @@
       "id": 24,
       "project_id": 2,
       "step_code": "s6",
-      "name": "Class Training",
+      "name": "Classifier",
       "assigned_to": "Nada",
       "duration": 15,
       "start_date": "2026-06-24",
