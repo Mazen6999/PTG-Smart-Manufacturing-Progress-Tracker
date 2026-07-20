@@ -1781,5 +1781,61 @@ td.date-cell {
     }
 }
 
+/* ==========================================
+   READ-ONLY MODE (GitHub Sync not configured)
+   Hides all edit/add/delete controls globally
+   ========================================== */
+body.read-only-mode #open-new-project-btn,
+body.read-only-mode #open-new-step-btn,
+body.read-only-mode #open-new-log-btn,
+body.read-only-mode .edit-project-btn,
+body.read-only-mode .delete-project-btn,
+body.read-only-mode .edit-step-trigger,
+body.read-only-mode .delete-step-trigger,
+body.read-only-mode .delete-log-btn,
+body.read-only-mode #edit-notes-btn,
+body.read-only-mode .actions-cell {
+    display: none !important;
+}
 
+/* Disable inline status and progress dropdowns */
+body.read-only-mode .status-select,
+body.read-only-mode .progress-select {
+    pointer-events: none;
+    opacity: 0.7;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    background-image: none !important;
+}
 
+/* Hide the daily log submission form */
+body.read-only-mode .log-form-container form,
+body.read-only-mode #global-log-form {
+    display: none !important;
+}
+
+/* Hide the import/database modification controls */
+body.read-only-mode #import-json-btn,
+body.read-only-mode .import-section {
+    display: none !important;
+}
+
+/* Read-only banner styling */
+.read-only-banner {
+    background: linear-gradient(135deg, #fef3c7, #fde68a);
+    border: 1px solid #f59e0b;
+    border-radius: 8px;
+    padding: 10px 16px;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #92400e;
+}
+
+.read-only-banner .banner-icon {
+    font-size: 18px;
+}

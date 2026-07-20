@@ -97,10 +97,19 @@ async function triggerBackgroundSyncCheck() {
         updateSyncButtonState(false);
     }
 }
+// Read-only mode: lock all editing if GitHub sync is not fully configured
+function updateReadOnlyMode() {
+    if (window.Store.isEditingAllowed()) {
+        document.body.classList.remove('read-only-mode');
+    } else {
+        document.body.classList.add('read-only-mode');
+    }
+}
 
 // Start UI App
 window.addEventListener('load', async () => {
     await window.Store.initStore();
+    updateReadOnlyMode();
     window.UI.setupModalDismissers();
     setupGlobalEventListeners();
     navigate();
@@ -234,6 +243,11 @@ function renderDashboard() {
     const completedCount = projects.filter(p => (p.status || '').toLowerCase().trim() === 'completed').length;
 
     mainViewport.innerHTML = `
+        ${!window.Store.isEditingAllowed() ? `
+        <div class="read-only-banner">
+            <span class="banner-icon">🔒</span>
+            <span>Read-only mode — Enable GitHub Sync in <a href="#/database" style="color: #92400e; text-decoration: underline;">Settings</a> to add or edit projects.</span>
+        </div>` : ''}
         <div class="metrics-grid">
             <div class="metric-card glass">
                 <div class="metric-icon blue">📁</div>
@@ -1462,6 +1476,7 @@ function renderDatabaseView() {
             }
 
             window.Store.saveGitHubConfig(config);
+            updateReadOnlyMode();
             window.UI.showToast('GitHub Sync settings saved successfully!', 'success');
 
             if (config.enabled) {

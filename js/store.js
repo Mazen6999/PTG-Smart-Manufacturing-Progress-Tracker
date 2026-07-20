@@ -817,6 +817,12 @@ async function loadArchivedLogs() {
 }
 
 // Attach to window global namespace
+// Check if editing is allowed (requires full GitHub sync with write access)
+function isEditingAllowed() {
+    const config = getGitHubConfig();
+    return !!(config.enabled && config.repo && config.token);
+}
+
 window.Store = {
     initStore,
     getProjects,
@@ -838,7 +844,8 @@ window.Store = {
     saveGitHubConfig,
     archiveOlderLogs,
     loadArchivedLogs,
-    autoDetectGitHubRepo
+    autoDetectGitHubRepo,
+    isEditingAllowed
 };
 
 // --- MOCK SEED DATA ---
