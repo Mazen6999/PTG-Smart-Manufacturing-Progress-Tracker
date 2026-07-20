@@ -176,8 +176,11 @@ function renderGanttChart(steps, containerId, title = "Project Schedule Timeline
         svg += `<rect x="5" y="${y - 8}" width="${width - 10}" height="${rowHeight}" fill="rgba(241,245,249,0.3)" opacity="0" class="gantt-row-hover" rx="6" />`;
 
         // Draw Y-Axis label ticks
-        const extDepText = s.external_dep ? ` / ${s.external_dep}` : '';
-        const yLabelText = `${s.id} (${s.assigned}${extDepText})`;
+        const cleanAssigned = (s.assigned || 'Team').trim();
+        const cleanExtDep = (s.external_dep || '').trim();
+        const hasOverlap = cleanExtDep && cleanAssigned.toLowerCase().includes(cleanExtDep.toLowerCase());
+        const extDepText = (cleanExtDep && !hasOverlap) ? ` / ${cleanExtDep}` : '';
+        const yLabelText = `${s.id} (${cleanAssigned}${extDepText})`;
         
         svg += `
             <text x="${leftAxisWidth - 15}" y="${y + barHeight/2 + 4}" text-anchor="end" font-size="11.5" font-weight="bold" fill="#1f4e78">
