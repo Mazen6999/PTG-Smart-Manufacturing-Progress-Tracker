@@ -10,18 +10,15 @@ const ROUTES = {
     DATABASE: 'database'
 };
 
-// Date display formatter: converts 'YYYY-MM-DD' to 'D MMM' (e.g. '7 Jul')
+// Date display formatter: converts 'YYYY-MM-DD' to 'DD-MM-YYYY' (e.g. '07-07-2026')
 function formatDateDisplay(dateStr) {
     if (!dateStr) return '-';
     const parts = dateStr.split('-');
     if (parts.length !== 3) return dateStr;
-    const monthIndex = parseInt(parts[1], 10) - 1;
-    const day = parseInt(parts[2], 10);
-    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-    if (monthIndex >= 0 && monthIndex < 12) {
-        return `${day} ${months[monthIndex]}`;
-    }
-    return dateStr;
+    const year = parts[0];
+    const month = parts[1];
+    const day = parts[2];
+    return `${day}-${month}-${year}`;
 }
 
 // Background Sync State & Utilities
