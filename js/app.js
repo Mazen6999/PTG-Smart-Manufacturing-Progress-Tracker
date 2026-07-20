@@ -285,8 +285,8 @@ function renderDashboard() {
                                         <option value="Completed" ${proj.status === 'Completed' ? 'selected' : ''}>Completed</option>
                                     </select>
                                 </td>
-                                <td class="text-center">${proj.start_date || '-'}</td>
-                                <td class="text-center">${proj.due_date || '-'}</td>
+                                <td class="text-center date-cell text-muted">${formatDateDisplay(proj.start_date)}</td>
+                                <td class="text-center date-cell text-muted">${formatDateDisplay(proj.due_date)}</td>
                                 <td>🧑‍💻 ${proj.assigned_to || 'Team'}</td>
                                 <td class="text-small">${proj.latest_update || '-'}</td>
                                 <td class="text-small font-semibold text-primary">${proj.next_step || '-'}</td>

@@ -844,7 +844,8 @@ a:hover {
 .steps-table td {
     padding: 12px 10px;
 }
-.steps-table td.text-small {
+.steps-table td.text-small,
+td.date-cell {
     white-space: nowrap;
     font-size: 11px;
 }
