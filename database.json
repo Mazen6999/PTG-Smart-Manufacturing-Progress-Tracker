@@ -85,20 +85,6 @@
       "notes": ""
     },
     {
-      "id": 7,
-      "name": "C1 Out of tolerance Alarm dashboard",
-      "description": "",
-      "status": "In progress",
-      "priority": 9999,
-      "start_date": null,
-      "due_date": null,
-      "assigned_to": "Team",
-      "latest_update": "Initial project planning",
-      "next_step": "Requirements definition",
-      "blocked_by": null,
-      "notes": ""
-    },
-    {
       "id": 8,
       "name": "Daily Production Dashboard ReVamp",
       "description": "",
@@ -970,36 +956,6 @@
     {
       "id": 44,
       "project_id": 6,
-      "step_code": "s2",
-      "name": "Requirements definition",
-      "assigned_to": "Team",
-      "duration": 0,
-      "start_date": "2026-07-21",
-      "end_date": "2026-07-26",
-      "progress": 0,
-      "status": "Not started",
-      "dependencies": "s1",
-      "section": "FUTURE",
-      "external_dep": null
-    },
-    {
-      "id": 45,
-      "project_id": 7,
-      "step_code": "s1",
-      "name": "Initial project planning",
-      "assigned_to": "Team",
-      "duration": 0,
-      "start_date": "2026-07-16",
-      "end_date": "2026-07-21",
-      "progress": 50,
-      "status": "In progress",
-      "dependencies": null,
-      "section": "CURRENT",
-      "external_dep": null
-    },
-    {
-      "id": 46,
-      "project_id": 7,
       "step_code": "s2",
       "name": "Requirements definition",
       "assigned_to": "Team",
