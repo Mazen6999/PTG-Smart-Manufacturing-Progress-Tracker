@@ -674,15 +674,15 @@
       "project_id": 2,
       "step_code": "s6",
       "name": "Class Training",
-      "assigned_to": "Taric",
-      "duration": 0,
+      "assigned_to": "Nada",
+      "duration": 15,
       "start_date": "2026-06-24",
       "end_date": "2026-07-09",
       "progress": 100,
       "status": "Completed",
       "dependencies": "s5",
       "section": "AI BUILD",
-      "external_dep": null
+      "external_dep": ""
     },
     {
       "id": 25,
