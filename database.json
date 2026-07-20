@@ -564,15 +564,15 @@
       "project_id": 2,
       "step_code": "s1",
       "name": "Assessment & Proposal",
-      "assigned_to": "",
+      "assigned_to": "nada",
       "duration": 6,
       "start_date": "2026-04-01",
       "end_date": "2026-04-07",
       "progress": 100,
       "status": "In progress",
-      "dependencies": "",
+      "dependencies": "Electrical",
       "section": "SETUP",
-      "external_dep": ""
+      "external_dep": "Electrical"
     },
     {
       "id": 20,
