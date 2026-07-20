@@ -24,7 +24,7 @@
       "due_date": null,
       "assigned_to": null,
       "latest_update": "2nd Review",
-      "next_step": "App Dev & Optimization",
+      "next_step": "Calibration",
       "blocked_by": null
     },
     {
@@ -564,15 +564,15 @@
       "project_id": 2,
       "step_code": "s1",
       "name": "Assessment & Proposal",
-      "assigned_to": "Team",
-      "duration": null,
+      "assigned_to": "",
+      "duration": 14,
       "start_date": "2026-04-01",
       "end_date": "2026-04-15",
       "progress": 100,
       "status": "Completed",
-      "dependencies": null,
+      "dependencies": "",
       "section": "SETUP",
-      "external_dep": null
+      "external_dep": ""
     },
     {
       "id": 20,
