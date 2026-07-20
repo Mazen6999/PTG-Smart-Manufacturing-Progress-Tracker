@@ -1724,15 +1724,15 @@
       "project_id": 23,
       "step_code": "s4",
       "name": "Implement Shift Production Query",
-      "assigned_to": null,
+      "assigned_to": "",
       "duration": 1,
       "start_date": "2026-07-22",
       "end_date": "2026-07-23",
       "progress": 0,
       "status": "Not started",
       "dependencies": "s3",
-      "section": null,
-      "external_dep": null
+      "section": "Query.dev",
+      "external_dep": ""
     }
   ],
   "logs": [
