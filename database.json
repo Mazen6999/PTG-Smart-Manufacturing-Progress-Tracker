@@ -1608,7 +1608,7 @@
       "duration": 1,
       "start_date": "2026-07-20",
       "end_date": "2026-07-21",
-      "progress": 0,
+      "progress": 75,
       "status": "In progress",
       "dependencies": "",
       "section": "Database",
