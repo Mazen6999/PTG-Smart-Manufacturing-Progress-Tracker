@@ -307,19 +307,6 @@
       "next_step": "Business Requirements definition",
       "blocked_by": null,
       "notes": ""
-    },
-    {
-      "id": 24,
-      "name": "test1",
-      "description": "",
-      "status": "Not started",
-      "priority": 1,
-      "start_date": null,
-      "due_date": null,
-      "assigned_to": "test",
-      "latest_update": "Kickoff & Planning",
-      "next_step": "test",
-      "blocked_by": null
     }
   ],
   "steps": [
@@ -1730,51 +1717,6 @@
       "progress": 75,
       "status": "On Hold",
       "dependencies": "s1",
-      "section": null,
-      "external_dep": null
-    },
-    {
-      "id": 100,
-      "project_id": 24,
-      "step_code": "s1",
-      "name": "Kickoff & Planning",
-      "assigned_to": "test",
-      "duration": 2,
-      "start_date": "2026-07-20",
-      "end_date": "2026-07-22",
-      "progress": 100,
-      "status": "Completed",
-      "dependencies": null,
-      "section": "SETUP",
-      "external_dep": null
-    },
-    {
-      "id": 101,
-      "project_id": 24,
-      "step_code": "s2",
-      "name": "Requirements Definition",
-      "assigned_to": "test",
-      "duration": 5,
-      "start_date": "2026-07-22",
-      "end_date": "2026-07-27",
-      "progress": 0,
-      "status": "Not started",
-      "dependencies": "s1",
-      "section": "SETUP",
-      "external_dep": null
-    },
-    {
-      "id": 102,
-      "project_id": 24,
-      "step_code": "1",
-      "name": "test",
-      "assigned_to": null,
-      "duration": 1,
-      "start_date": null,
-      "end_date": null,
-      "progress": 0,
-      "status": "Not started",
-      "dependencies": null,
       "section": null,
       "external_dep": null
     }
