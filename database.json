@@ -1321,14 +1321,14 @@
       "step_code": "s3",
       "name": "Demo RAG - English",
       "assigned_to": "Team",
-      "duration": 0,
+      "duration": 7,
       "start_date": "2026-06-16",
       "end_date": "2026-06-23",
       "progress": 100,
-      "status": "Not started",
-      "dependencies": null,
+      "status": "Completed",
+      "dependencies": "",
       "section": "SETUP",
-      "external_dep": null
+      "external_dep": ""
     },
     {
       "id": 69,
