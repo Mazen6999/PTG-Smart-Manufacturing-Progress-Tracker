@@ -65,8 +65,8 @@
       "start_date": null,
       "due_date": null,
       "assigned_to": "Team",
-      "latest_update": "Initial project planning",
-      "next_step": "Requirements definition",
+      "latest_update": null,
+      "next_step": "Initial project planning",
       "blocked_by": null,
       "notes": ""
     },
@@ -923,21 +923,6 @@
       "status": "In progress",
       "dependencies": null,
       "section": "CURRENT",
-      "external_dep": null
-    },
-    {
-      "id": 42,
-      "project_id": 5,
-      "step_code": "s2",
-      "name": "Requirements definition",
-      "assigned_to": "Team",
-      "duration": 0,
-      "start_date": "2026-07-21",
-      "end_date": "2026-07-26",
-      "progress": 0,
-      "status": "Not started",
-      "dependencies": "s1",
-      "section": "FUTURE",
       "external_dep": null
     },
     {
