@@ -23,6 +23,7 @@ function formatDateDisplay(dateStr) {
 
 // Background Sync State & Utilities
 let isSyncingInBackground = false;
+let isPushingActive = false;
 
 function updateSyncButtonState(active) {
     const btn = document.getElementById('manual-sync-btn');
@@ -50,7 +51,7 @@ function renderCurrentView() {
 }
 
 async function triggerBackgroundSyncCheck() {
-    if (isSyncingInBackground) return;
+    if (isSyncingInBackground || isPushingActive) return;
 
     const config = window.Store.getGitHubConfig();
     const detected = window.Store.autoDetectGitHubRepo();
@@ -1684,12 +1685,18 @@ function setupGlobalEventListeners() {
 
     // 4. GitHub API Sync Status Toast Listeners
     window.addEventListener('github-sync-start', () => {
+        isPushingActive = true;
         window.UI.showToast("Syncing changes with GitHub repository...", "info");
     });
     window.addEventListener('github-sync-success', () => {
+        isPushingActive = false;
         window.UI.showToast("Changes successfully committed to GitHub!", "success");
     });
     window.addEventListener('github-sync-error', (e) => {
+        isPushingActive = false;
         window.UI.showToast(`GitHub Sync Failed: ${e.detail || 'Unknown Error'}`, "danger");
+    });
+    window.addEventListener('github-sync-conflict', () => {
+        isPushingActive = false;
     });
 }
