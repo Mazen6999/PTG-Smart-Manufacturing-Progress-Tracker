@@ -1695,14 +1695,14 @@
       "step_code": "S8",
       "name": "Object Detection Training",
       "assigned_to": "Nada",
-      "duration": 1,
+      "duration": 7,
       "start_date": "2026-07-15",
-      "end_date": "2026-04-22",
+      "end_date": "2026-07-22",
       "progress": 25,
       "status": "In progress",
       "dependencies": "s7",
       "section": "Training",
-      "external_dep": null
+      "external_dep": ""
     }
   ],
   "logs": [
