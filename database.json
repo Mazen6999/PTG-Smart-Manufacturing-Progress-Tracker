@@ -1602,7 +1602,7 @@
     {
       "id": 89,
       "project_id": 23,
-      "step_code": "s2",
+      "step_code": "s3",
       "name": "Data source definition",
       "assigned_to": "Team",
       "duration": 1,
