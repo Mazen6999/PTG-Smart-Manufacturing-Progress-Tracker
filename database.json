@@ -23,7 +23,7 @@
       "start_date": null,
       "due_date": null,
       "assigned_to": "Team",
-      "latest_update": "2nd Review",
+      "latest_update": "Object Detection Training",
       "next_step": "Calibration",
       "blocked_by": null,
       "notes": ""
@@ -1654,8 +1654,8 @@
       "duration": 7,
       "start_date": "2026-07-15",
       "end_date": "2026-07-22",
-      "progress": 25,
-      "status": "In progress",
+      "progress": 100,
+      "status": "Completed",
       "dependencies": "s7",
       "section": "Training",
       "external_dep": ""
