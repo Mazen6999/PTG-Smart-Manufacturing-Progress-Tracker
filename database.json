@@ -9,7 +9,7 @@
       "start_date": "2026-06-12",
       "due_date": "2026-07-31",
       "assigned_to": "Team",
-      "latest_update": "IT Handheld Validation Logic & Kepware Signal Setup",
+      "latest_update": "C1 Printing Feedback & Mch 9 Readability Verification",
       "next_step": "Camera IP Wireless Network Access Configuration",
       "blocked_by": "IT / Network",
       "notes": "MOM 21/7: Zebra cameras moved to main axis for Mch 1, 6, 18, 12, 22. IT handheld validation logic & Kepware signal setup ready for trial."
@@ -529,8 +529,8 @@
       "duration": 2,
       "start_date": "2026-07-22",
       "end_date": "2026-07-23",
-      "progress": 25,
-      "status": "In progress",
+      "progress": 100,
+      "status": "Completed",
       "dependencies": "s14",
       "section": "DEPLOY",
       "external_dep": "Quality"
