@@ -514,8 +514,8 @@
       "duration": 1,
       "start_date": "2026-07-22",
       "end_date": "2026-07-22",
-      "progress": 50,
-      "status": "In progress",
+      "progress": 100,
+      "status": "Completed",
       "dependencies": "s13",
       "section": "DEPLOY",
       "external_dep": "IT / Production"
