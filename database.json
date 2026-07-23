@@ -529,7 +529,7 @@
       "duration": 7,
       "start_date": "2026-07-23",
       "end_date": "2026-07-30",
-      "progress": 50,
+      "progress": 25,
       "status": "In progress",
       "dependencies": "s14",
       "section": "DEPLOY",
