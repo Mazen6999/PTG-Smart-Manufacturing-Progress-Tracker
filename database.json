@@ -419,7 +419,7 @@
       "id": 8,
       "project_id": 1,
       "step_code": "s8",
-      "name": "Enable Camera GPIO at Sidewall Stitching Phase",
+      "name": "Enable Camera GPIO at Tread Stitching Phase",
       "assigned_to": "Ramy",
       "duration": 1,
       "start_date": "2026-07-13",
