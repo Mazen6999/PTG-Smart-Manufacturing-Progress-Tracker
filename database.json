@@ -9,9 +9,9 @@
       "start_date": "2026-06-12",
       "due_date": "2026-07-31",
       "assigned_to": "Team",
-      "latest_update": "Hardware Relocation (Mch 1, 6, 18, 12, 22) & IT Handheld Logic Alignment",
-      "next_step": "IT Handheld Trial & Readability Rate Feedback (Mch 9 / C1)",
-      "blocked_by": null,
+      "latest_update": "Camera IP Wireless Network Access Configuration",
+      "next_step": "IT Handheld Validation Logic & Kepware Signal Setup",
+      "blocked_by": "IT",
       "notes": "MOM 21/7: Zebra cameras moved to main axis for Mch 1, 6, 18, 12, 22. IT handheld validation logic & Kepware signal setup ready for trial."
     },
     {
@@ -404,7 +404,7 @@
       "id": 7,
       "project_id": 1,
       "step_code": "s7",
-      "name": "Machine 9 Continuous Verification & BOM Check",
+      "name": "Machine 9 Continuous Verification",
       "assigned_to": "Nada / Mazen",
       "duration": 7,
       "start_date": "2026-07-13",
