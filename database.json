@@ -9,9 +9,9 @@
       "start_date": "2026-06-12",
       "due_date": "2026-07-31",
       "assigned_to": "Team",
-      "latest_update": "Camera IP Wireless Network Access Configuration",
-      "next_step": "IT Handheld Validation Logic & Kepware Signal Setup",
-      "blocked_by": "IT",
+      "latest_update": "C1 Barcode Printing Setup (Mch 22)",
+      "next_step": "Camera IP Wireless Network Access Configuration",
+      "blocked_by": "IT / Network",
       "notes": "MOM 21/7: Zebra cameras moved to main axis for Mch 1, 6, 18, 12, 22. IT handheld validation logic & Kepware signal setup ready for trial."
     },
     {
@@ -484,8 +484,8 @@
       "duration": 1,
       "start_date": "2026-07-21",
       "end_date": "2026-07-21",
-      "progress": 100,
-      "status": "Completed",
+      "progress": 50,
+      "status": "In progress",
       "dependencies": "s10",
       "section": "DEPLOY",
       "external_dep": "IT / Network"
